@@ -1,0 +1,51 @@
+[versions]
+agp = "8.6.0"
+kotlin = "2.0.20"
+coreKtx = "1.10.1"
+junit = "4.13.2"
+junitVersion = "1.1.5"
+espressoCore = "3.5.1"
+appcompat = "1.6.1"
+kotlinpoetKsp = "1.12.0"
+material = "1.10.0"
+activity = "1.8.0"
+constraintlayout = "2.1.4"
+lifecycleVersion = "2.3.0"
+kotlinReflectVersion = "1.7.10"
+kotlinxCorountinesVersion = "1.6.4"
+kspVersion = "2.0.20-1.0.25"
+converterGsonVersion = "2.9.0"
+adapterVesion = "2.3.0"
+okhttp3Version = "4.9.2"
+jetbrainsKotlinJvm = "2.0.20"
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+
+lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleVersion" }
+lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleVersion" }
+
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlinReflectVersion" }
+kotlinx-corountines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCorountinesVersion" }
+
+kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinpoetKsp" }
+devtools-ksp = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "kspVersion" }
+
+squareup-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "converterGsonVersion" }
+squareup-adapter-rxjava2 = { group = "com.squareup.retrofit2", name = "adapter-rxjava2", version.ref = "adapterVesion" }
+squareup-okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp3Version" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+
+
