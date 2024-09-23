@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.hearthappy.ksp.model.request.LoginBody
+import com.hearthappy.vma.model.request.LoginBody
 import com.hearthappy.viewmodelautomation.R
 import com.hearthappy.viewmodelautomation.databinding.ActivityMainBinding
 import com.hearthappy.vma.api.RetrofitManage

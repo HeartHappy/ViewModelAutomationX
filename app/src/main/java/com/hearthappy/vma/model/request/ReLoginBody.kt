@@ -1,4 +1,4 @@
-package com.hearthappy.ksp.model.request
+package com.hearthappy.vma.model.request
 
 class ReLoginBody {
 }

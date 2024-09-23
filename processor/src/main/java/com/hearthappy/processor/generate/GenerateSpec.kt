@@ -68,7 +68,8 @@ class GenerateSpec {
 
 
     internal fun generateFileAndWrite(vma: ViewModelData, generateClass: TypeSpec.Builder, codeGenerator: CodeGenerator) { //创建文件
-        FileSpec.builder(Constant.GENERATE_VIEWMODEL_PKG, vma.className).addType(generateClass.build()).build().writeTo(codeGenerator, Dependencies(vma.aggregating, vma.containingFile!!))
+        FileSpec.builder(Constant.GENERATE_VIEWMODEL_PKG, vma.className)
+            .addType(generateClass.build()).build().writeTo(codeGenerator, Dependencies(vma.aggregating, vma.containingFile!!))
     }
 }
 

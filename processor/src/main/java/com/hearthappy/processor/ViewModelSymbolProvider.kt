@@ -34,11 +34,11 @@ class ViewModelSymbolProcessor(
     private val codeGenerator: CodeGenerator
 ) :
     SymbolProcessor {
-
+    private val generateData = GenerateViewModelData()
+    private val generateFactory: IGenerateFactory by lazy { GenerateFactory(logger) }
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val generateData = GenerateViewModelData()
-        val generateFactory: IGenerateFactory by lazy { GenerateFactory(logger) }
+
         val measureTimeMillis = measureTimeMillis {
 
             val vmaSymbols = resolver.getSymbolsWithAnnotation(ViewModelAutomation::class.qualifiedName!!).filter { it.validate() }

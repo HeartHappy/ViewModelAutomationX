@@ -1,4 +1,4 @@
-package com.hearthappy.ksp.model.response
+package com.hearthappy.vma.model.response
 
 data class ResLogin(
     val code: Int,

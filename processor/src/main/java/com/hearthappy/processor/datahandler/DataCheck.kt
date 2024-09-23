@@ -6,15 +6,14 @@ import com.hearthappy.processor.constant.Constant
 
 object DataCheck {
 
-    fun isParameter(paramName: String?, paramType: String) =
-        !(paramName == "other" || paramType == "Any")
+    fun isParameter(paramName: String?, paramType: String) = !(paramName == "other" || paramType == "Any")
 
 
-    fun isFunction(functionName: String) =
-        !(functionName == "equals" || functionName == "hashCode" || functionName == "toString" || functionName == "component")
+    fun isFunction(functionName: String) = !listOf("equals", "hashCode", "toString").contains(functionName)
+//        !(functionName == "equals" || functionName == "hashCode" || functionName == "toString" || functionName == "component")
 
-    fun isReturnType(returnType: String) =
-        !(returnType == "Boolean" || returnType == "Int" || returnType == "Float" || returnType == "Double" || returnType == "String")
+    fun isReturnType(returnType: String) = !listOf("Boolean", "Int", "Float", "Double", "String").contains(returnType)
+//        !(returnType == "Boolean" || returnType == "Int" || returnType == "Float" || returnType == "Double" || returnType == "String")
 
     //检查函数是否包含注解
     fun KSFunctionDeclaration.isContainsAnnotation() = this.annotations.count() > 0

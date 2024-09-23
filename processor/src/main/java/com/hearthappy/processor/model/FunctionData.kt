@@ -1,6 +1,5 @@
 package com.hearthappy.processor.model
 
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.TypeName
 import kotlin.properties.Delegates
@@ -10,13 +9,14 @@ class FunctionData {
     var methodAliasName: String by Delegates.notNull()
     var propertyAliasName: String by Delegates.notNull()
     val parameterList: MutableList<ParameterSpec> = mutableListOf()
-    var returnParentType: ClassName by Delegates.notNull()
-    var returnType: ClassName? = null
+
+    //    var returnParentType: TypeName by Delegates.notNull()
+    var returnType: TypeName by Delegates.notNull()
     var annotationType: String by Delegates.notNull()
 
 
     override fun toString(): String {
-        return "FunctionData(methodName='$methodName',methodNameAlias:$methodAliasName, parameterList=$parameterList, returnParentType=$returnParentType,returnType:$returnType, annotationType='$annotationType')"
+        return "FunctionData(methodName='$methodName',methodNameAlias:$methodAliasName, parameterList=$parameterList,returnType:$returnType, annotationType='$annotationType')"
     }
 
 }

@@ -30,11 +30,11 @@ class GenerateFactory(private val logger: KSPLogger) : IGenerateFactory {
 
     override fun TypeSpec.Builder.generateProperty(vma: ViewModelData) {
         vma.functionList.forEach {
-            val returnType = it.returnType?.run { it.returnParentType.parameterizedBy(this) } ?: it.returnParentType
-            logger.printVma(vma.enabledLog, "Generating property:name:${it.propertyAliasName},annotationType:${it.annotationType},returnType: $returnType")
+//            val returnType = it.returnType?.run { it.returnParentType.parameterizedBy(this) } ?: it.returnParentType
+            logger.printVma(vma.enabledLog, "Generating property--->name:${it.propertyAliasName},annotationType:${it.annotationType},returnType: ${it.returnType}")
             when (it.annotationType) {
-                Constant.BIND_LIVE_DATA -> generatePropertyByLiveData(it.propertyAliasName, returnType)
-                else                    -> generatePropertyByStateFlow(it.propertyAliasName, returnType)
+                Constant.BIND_LIVE_DATA -> generatePropertyByLiveData(it.propertyAliasName, it.returnType)
+                else                    -> generatePropertyByStateFlow(it.propertyAliasName, it.returnType)
             }
         }
     }
@@ -42,14 +42,14 @@ class GenerateFactory(private val logger: KSPLogger) : IGenerateFactory {
 
     override fun TypeSpec.Builder.generateMethod(vma: ViewModelData) {
         vma.functionList.forEach {
-            val returnType = it.returnType?.run { it.returnParentType.parameterizedBy(this) } ?: it.returnParentType
+//            val returnType = it.returnType?.run { it.returnParentType.parameterizedBy(this) } ?: it.returnParentType
             val function = FunSpec.builder(it.methodAliasName).apply {
                 this.addParameters(it.parameterList)
                 when (it.annotationType) {
-                    Constant.BIND_LIVE_DATA -> generateFunctionContent(returnType, it.propertyAliasName, vma.api, it, LIVE_DATA_RESULT)
-                    else                    -> generateFunctionContent(returnType, it.propertyAliasName, vma.api, it, FLOW_RESULT)
+                    Constant.BIND_LIVE_DATA -> generateFunctionContent(it.returnType, it.propertyAliasName, vma.api, it, LIVE_DATA_RESULT)
+                    else                    -> generateFunctionContent(it.returnType, it.propertyAliasName, vma.api, it, FLOW_RESULT)
                 }
-                logger.printVma(vma.enabledLog, "Generating function:name:${it.methodName},params:${it.parameterList.joinToString { jts -> jts.name }}")
+                logger.printVma(vma.enabledLog, "Generating function--->name:${it.methodName},params:${it.parameterList.joinToString { jts -> jts.name }}")
             }
             addFunction(function.build())
         }

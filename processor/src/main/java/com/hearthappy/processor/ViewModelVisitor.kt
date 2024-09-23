@@ -22,6 +22,7 @@ import com.hearthappy.processor.model.GenerateViewModelData
 import com.hearthappy.processor.model.ViewModelData
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ksp.toTypeName
 
 class ViewModelVisitor(
     private val logger: KSPLogger,
@@ -48,7 +49,6 @@ class ViewModelVisitor(
         val viewModelData = generateData.viewModelData.get(index = index)
         val functionName = function.simpleName.asString()
         if (DataCheck.isFunction(functionName)) {
-            logger.printVma(viewModelData.enabledLog, "function name: $functionName")
             FunctionData().apply {
                 this.methodName = functionName
                 parsingFunAnnotation(function, this, functionName, viewModelData)
@@ -56,6 +56,7 @@ class ViewModelVisitor(
                 parsingFunReturnType(function, this, viewModelData)
                 viewModelData.functionList.add(this)
             }
+            logger.printVma(viewModelData.enabledLog, "function name: $functionName")
         }
         super.visitFunctionDeclaration(function, data)
     }
@@ -104,12 +105,12 @@ class ViewModelVisitor(
 
                     BindFunctionArgs.PROPERTY_NAME -> {
                         val propertyName = argument.value as String
-                        functionData.propertyAliasName = propertyName.isNotEmpty().takeIf { it }?.run { propertyName } ?: run { functionName.plus(it.shortName.asString().bindSuffix()) }
+                        functionData.propertyAliasName = propertyName.isNotEmpty().takeIf { tif -> tif }?.run { propertyName } ?: run { functionName.plus(it.shortName.asString().bindSuffix()) }
                     }
                 }
             }
             functionData.annotationType = it.shortName.asString()
-            logger.printVma(viewModelData.enabledLog, "function annotation: shortName:${it.shortName.asString()},${it.arguments.toList()}")
+            logger.printVma(viewModelData.enabledLog, "function annotation--->name:${it.shortName.asString()},args:${it.arguments.toList()}")
         } ?: throw VMAAnalysisException("No BindLiveData or BindStateFlow annotation was found. Please declare the annotation on the <$functionName> function")
     }
 
@@ -121,28 +122,10 @@ class ViewModelVisitor(
      * @param viewModelData ViewModelData
      */
     private fun parsingFunReturnType(function: KSFunctionDeclaration, functionData: FunctionData, viewModelData: ViewModelData) {
-        function.returnType?.apply {
-            //获取ResultData<ResLogin>中的ResultData类,获取内外层类
-            resolve().apply {
-                val simpleName = declaration.simpleName.asString()
-                if (DataCheck.isReturnType(simpleName)) {
-                    //                        logger.outDeclaration(viewModelData.enabledLog, this, 2)
-                    functionData.returnParentType = ClassName(this.declaration.packageName.asString(), this.declaration.simpleName.asString())
-
-                }
-            }
-            //获取内层类
-            element?.apply {
-                this.typeArguments.forEach {
-                    //获取ResultData<ResLogin>中的ResLogin类
-                    it.type?.resolve()?.apply {
-//                        logger.outDeclaration(viewModelData.enabledLog, this, 1)
-                        functionData.returnType = ClassName(this.declaration.packageName.asString(), this.declaration.simpleName.asString())
-                    }
-                }
-            }
-            logger.printVma(viewModelData.enabledLog, "function returnParentType:${functionData.returnParentType},returnType:${functionData.returnType}")
-
+        function.returnType?.resolve()?.apply {
+            //KSType.toTypeName()扩展函数直接可获取复杂返回类型
+            functionData.returnType = this.toTypeName()
+            logger.printVma(viewModelData.enabledLog, "function returnType--->${functionData.returnType}")
         }
     }
 
@@ -154,20 +137,12 @@ class ViewModelVisitor(
      * @param viewModelData ViewModelData
      */
     private fun parsingFunParams(function: KSFunctionDeclaration, functionData: FunctionData, viewModelData: ViewModelData) {
-        function.parameters.forEach {
-            val paramName = it.name?.asString()
-            val paramType = it.type.resolve().declaration.simpleName.asString()
-            val typePackage = it.type.resolve().declaration.packageName.asString()
-            if (DataCheck.isParameter(paramName, paramType)) {
-                paramName?.let { pkg ->
-                    functionData.parameterList.add(ParameterSpec(pkg, ClassName(typePackage, paramType)))
-                    logger.printVma(viewModelData.enabledLog, "function param:paramName:$pkg,paramType:${paramType},typePackage:$typePackage")
-                } ?: throw VMAAnalysisException("paramName is null")
-            }
-            //参数注解
-            //                for (annotation in it.annotations) {
-            //                    logger.printVma("parameter annotation:shortName:${annotation.shortName.asString()},annotationType:${annotation.annotationType},${annotation.arguments.toList()}")
-            //                }
+        function.parameters.map {
+            val paramName = it.name?.asString() ?: throw VMAAnalysisException("paramName is null")
+            logger.printVma(viewModelData.enabledLog, "function parameter--->name:$paramName,typeName:${it.type.toTypeName()}")
+            ParameterSpec(paramName, it.type.toTypeName())
+        }.also {
+            functionData.parameterList.addAll(it)
         }
     }
 
