@@ -3,23 +3,29 @@ package com.hearthappy.processor.generate.impl
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
 import com.hearthappy.processor.constant.Constant
+import com.hearthappy.processor.constant.Constant.DATASTORE_EXT_PKG
 import com.hearthappy.processor.constant.Constant.FLOW_RESULT
+import com.hearthappy.processor.constant.Constant.INDENTATION
 import com.hearthappy.processor.constant.Constant.LIVE_DATA_RESULT
-import com.hearthappy.processor.constant.LifecyclesTypeNames
-import com.hearthappy.processor.constant.VMANetworkTypeNames
 import com.hearthappy.processor.datahandler.privatePropertyName
+import com.hearthappy.processor.datahandler.rename
+import com.hearthappy.processor.ext.DataStoreTypeNames
+import com.hearthappy.processor.ext.LifecyclesTypeNames
+import com.hearthappy.processor.ext.VMANetworkTypeNames
+import com.hearthappy.processor.ext.string2preferenceType
 import com.hearthappy.processor.generate.GenerateSpec
-import com.hearthappy.processor.generate.IGenerateFactory
+import com.hearthappy.processor.generate.IVMAFactory
 import com.hearthappy.processor.log.printVma
 import com.hearthappy.processor.model.FunctionData
 import com.hearthappy.processor.model.ViewModelData
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
 
-class GenerateFactory(private val logger: KSPLogger) : IGenerateFactory {
+class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
 
     private val generateSpec by lazy { GenerateSpec() }
 
@@ -46,8 +52,8 @@ class GenerateFactory(private val logger: KSPLogger) : IGenerateFactory {
             val function = FunSpec.builder(it.methodAliasName).apply {
                 this.addParameters(it.parameterList)
                 when (it.annotationType) {
-                    Constant.BIND_LIVE_DATA -> generateFunctionContent(it.returnType, it.propertyAliasName, vma.api, it, LIVE_DATA_RESULT)
-                    else                    -> generateFunctionContent(it.returnType, it.propertyAliasName, vma.api, it, FLOW_RESULT)
+                    Constant.BIND_LIVE_DATA -> generateFunctionContent(vma, it, LIVE_DATA_RESULT)
+                    else                    -> generateFunctionContent(vma, it, FLOW_RESULT)
                 }
                 logger.printVma(vma.enabledLog, "Generating function--->name:${it.methodName},params:${it.parameterList.joinToString { jts -> jts.name }}")
             }
@@ -62,14 +68,14 @@ class GenerateFactory(private val logger: KSPLogger) : IGenerateFactory {
 
     private fun TypeSpec.Builder.generatePropertyByLiveData(propertyName: String, resultClassName: TypeName) {
         //Create a private property
-        addProperty(generateSpec.generateDelegatePropertySpec(propertyName.privatePropertyName(), LifecyclesTypeNames.MutableLiveData.parameterizedBy(VMANetworkTypeNames.LiveDataResult.parameterizedBy(resultClassName)), "${Constant.MUTABLE_LIVEDATA}()", KModifier.PRIVATE))
+        addProperty(generateSpec.generateDelegatePropertySpec(propertyName = propertyName.privatePropertyName(), receiverType = null, propertyType = LifecyclesTypeNames.MutableLiveData.parameterizedBy(VMANetworkTypeNames.LiveDataResult.parameterizedBy(resultClassName)), delegateValue = "${Constant.MUTABLE_LIVEDATA}()", KModifier.PRIVATE))
         //Create a public property
         addProperty(generateSpec.generatePropertySpec(propertyName, LifecyclesTypeNames.LiveData.parameterizedBy(VMANetworkTypeNames.LiveDataResult.parameterizedBy(resultClassName)), initValue = propertyName.privatePropertyName()))
     }
 
     private fun TypeSpec.Builder.generatePropertyByStateFlow(propertyName: String, resultClassName: TypeName) {
         //Create a private property
-        addProperty(generateSpec.generateDelegatePropertySpec(propertyName.privatePropertyName(), LifecyclesTypeNames.MutableStateFlow.parameterizedBy(VMANetworkTypeNames.FlowResult.parameterizedBy(resultClassName)), "${Constant.MUTABLE_STATE_FLOW}(${FLOW_RESULT}.Default)", KModifier.PRIVATE))
+        addProperty(generateSpec.generateDelegatePropertySpec(propertyName = propertyName.privatePropertyName(), receiverType = null, propertyType = LifecyclesTypeNames.MutableStateFlow.parameterizedBy(VMANetworkTypeNames.FlowResult.parameterizedBy(resultClassName)), delegateValue = "${Constant.MUTABLE_STATE_FLOW}(${FLOW_RESULT}.Default)", KModifier.PRIVATE))
         //Create a public property
         addProperty(generateSpec.generatePropertySpec(propertyName, LifecyclesTypeNames.StateFlow.parameterizedBy(VMANetworkTypeNames.FlowResult.parameterizedBy(resultClassName)), initValue = propertyName.privatePropertyName()))
     }
@@ -82,15 +88,32 @@ class GenerateFactory(private val logger: KSPLogger) : IGenerateFactory {
      * %L：表示一个字面量（literal）。
      * %N：表示一个标识符（identifier）。
      */
-    private fun FunSpec.Builder.generateFunctionContent(resultClassName: TypeName, propertyName: String, api: String, functionData: FunctionData, resultType: String) {
-        addStatement("%T<%T>(io = {", VMANetworkTypeNames.RequestScope, resultClassName)
-        if (resultType == FLOW_RESULT) addStatement("%L.value = %L.Loading", propertyName.privatePropertyName(), resultType)
-        addStatement("%L.%L(%L)", api, functionData.methodName, functionData.parameterList.joinToString { it.name })
+    private fun FunSpec.Builder.generateFunctionContent(vma: ViewModelData, fd: FunctionData, resultType: String) {
+        addStatement("%T<%T>(io = {", VMANetworkTypeNames.RequestScope, fd.returnType)
+        if (resultType == FLOW_RESULT) addStatement("%L%L.value = %L.Loading", INDENTATION, fd.propertyAliasName.privatePropertyName(), resultType)
+        addStatement("%L%L.%L(%L)", INDENTATION, vma.api, fd.methodName, fd.parameterList.joinToString { it.name })
         addStatement("}, onSucceed = {")
-        addStatement("%L.value = %L.Succeed(it)", propertyName.privatePropertyName(), resultType)
+        addStatement("%L%L.value = %L.Succeed(it)", INDENTATION, fd.propertyAliasName.privatePropertyName(), resultType)
         addStatement("}, onThrowable = {")
-        addStatement("%L.value =%L.Throwable(it)", propertyName.privatePropertyName(), resultType)
+        addStatement("%L%L.value = %L.Throwable(it)", INDENTATION, fd.propertyAliasName.privatePropertyName(), resultType)
+        fd.storageData?.apply {
+            if (this.storageList.isNotEmpty()) {
+                val dataStoreRename = this.name?.rename() ?: "dataStore"
+                val preferences = "preferences"
+                vma.imports.add(ClassName(DATASTORE_EXT_PKG, dataStoreRename))
+                vma.imports.add(DataStoreTypeNames.DataStoreEdit)
+                addStatement("}, onDataStore = {")
+                addStatement("%L%L.%L.edit { %L->", INDENTATION, Constant.APP, dataStoreRename, preferences)
+                this.storageList.forEach {
+                    // preferences[stringPreferencesKey(PreferencesKeys.IMAGE_URL)] = it.message
+                    addStatement("%L%L%L[%L(%L)] = it.%L", INDENTATION, INDENTATION, preferences, it.type.string2preferenceType(vma.imports), it.key, it.value)
+                }
+                addStatement("%L}", INDENTATION)
+            }
+        }
+
         addStatement("})")
     }
+
 
 }

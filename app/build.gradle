@@ -64,6 +64,10 @@ dependencies {
 //    implementation "androidx.room:room-runtime:$room_version"
 //    annotationProcessor "androidx.room:room-compiler:$room_version"
 
+
+    implementation libs.datastore.preferences
+    implementation libs.datastore.preferences.core
+
     implementation project(':vma-ktx')
     implementation project(':annotations')
     implementation project(':processor')

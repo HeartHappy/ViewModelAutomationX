@@ -9,14 +9,19 @@ import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.validate
 import com.hearthappy.annotations.ViewModelAutomation
-import com.hearthappy.processor.generate.IGenerateFactory
-import com.hearthappy.processor.generate.impl.GenerateFactory
+import com.hearthappy.annotations.storage.DataStore
+import com.hearthappy.processor.datahandler.DataCheck.isEmpty
+import com.hearthappy.processor.generate.IFileFactory
+import com.hearthappy.processor.generate.IVMAFactory
+import com.hearthappy.processor.generate.impl.GenerateFileImpl
+import com.hearthappy.processor.generate.impl.GenerateVMAImpl
 import com.hearthappy.processor.log.printEnd
 import com.hearthappy.processor.log.printGenerateEnd
 import com.hearthappy.processor.log.printGenerateStart
-import com.hearthappy.processor.log.printGenerateTook
+import com.hearthappy.processor.log.printGenerateVMATook
 import com.hearthappy.processor.log.printParsing
 import com.hearthappy.processor.log.printStart
+import com.hearthappy.processor.model.GenerateDataStoreData
 import com.hearthappy.processor.model.GenerateViewModelData
 import kotlin.system.measureTimeMillis
 
@@ -35,22 +40,42 @@ class ViewModelSymbolProcessor(
 ) :
     SymbolProcessor {
     private val generateData = GenerateViewModelData()
-    private val generateFactory: IGenerateFactory by lazy { GenerateFactory(logger) }
+    private val generateDataStoreData = GenerateDataStoreData()
+    private val generateFactory: IVMAFactory by lazy { GenerateVMAImpl(logger) }
+    private val generateDSFactory: IFileFactory by lazy { GenerateFileImpl() }
+
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
 
         val measureTimeMillis = measureTimeMillis {
-
             val vmaSymbols = resolver.getSymbolsWithAnnotation(ViewModelAutomation::class.qualifiedName!!).filter { it.validate() }
-            if (vmaSymbols.count() == 0) return emptyList()
-            parsingProcess(vmaSymbols, generateData)
-            generateProcess(generateData, generateFactory)
+            if (vmaSymbols.isEmpty()) return emptyList()
+            parsingVMAProcess(resolver, vmaSymbols, generateData)
+            generateVMAProcess()
         }
-        logger.printGenerateTook(generateData.viewModelData.size, measureTimeMillis)
+        logger.printGenerateVMATook(generateData.viewModelData.size, measureTimeMillis)
+
+        val dsSymbols = resolver.getSymbolsWithAnnotation(DataStore::class.qualifiedName!!).filter { it.validate() }
+        if (dsSymbols.isEmpty()) return emptyList()
+        parsingDSProcess(dsSymbols, resolver)
+        generateDSProcess()
         return emptyList()
     }
 
-    private fun generateProcess(generateData: GenerateViewModelData, generateFactory: IGenerateFactory) {
+    private fun generateDSProcess() {
+        generateDSFactory.apply {
+            generateDataStoreFile().apply {
+                generateProperty(generateDataStoreData)
+                generateAndWriteFile(codeGenerator)
+            }
+        }
+    }
+
+    private fun parsingDSProcess(dsSymbols: Sequence<KSAnnotated>, resolver: Resolver) {
+        dsSymbols.forEachIndexed { index, ksAnnotated -> ksAnnotated.accept(DataStoreVisitor(resolver, logger, generateDataStoreData, index), Unit) }
+    }
+
+    private fun generateVMAProcess() {
         generateData.viewModelData.forEach {
             generateFactory.apply {
                 logger.printGenerateStart(it.enabledLog, it.className)
@@ -64,9 +89,9 @@ class ViewModelSymbolProcessor(
         }
     }
 
-    private fun parsingProcess(vmaSymbols: Sequence<KSAnnotated>, generateData: GenerateViewModelData) {
+    private fun parsingVMAProcess(resolver: Resolver, vmaSymbols: Sequence<KSAnnotated>, generateData: GenerateViewModelData) {
         logger.printStart()
-        vmaSymbols.forEachIndexed { index, it -> it.accept(ViewModelVisitor(logger, generateData, index), Unit) }
+        vmaSymbols.forEachIndexed { index, it -> it.accept(ViewModelVisitor(resolver, logger, generateData, index), Unit) }
         logger.printParsing(vmaSymbols.count())
         logger.printEnd()
     }

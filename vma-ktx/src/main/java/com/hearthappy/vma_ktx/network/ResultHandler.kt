@@ -1,28 +1,5 @@
 package com.hearthappy.vma_ktx.network
 
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainCoroutineDispatcher
-import kotlinx.coroutines.withContext
-
-val succeedCode = 200..299
-
-
-suspend inline fun <reified R> responseHandler(response: R, dispatcher: CoroutineDispatcher, crossinline onSucceed: (R) -> Unit) {
-    withMainCoroutine(dispatcher) {
-        onSucceed(response)
-    }
-}
-
-suspend fun withMainCoroutine(dispatcher: CoroutineDispatcher, block: () -> Unit) {
-    when (dispatcher) {
-        is MainCoroutineDispatcher -> {
-            withContext(Dispatchers.Main) { block() }
-        }
-
-        else                       -> block()
-    }
-}
 
 data class FailedBody(val statusCode: Int, val text: String?)
 

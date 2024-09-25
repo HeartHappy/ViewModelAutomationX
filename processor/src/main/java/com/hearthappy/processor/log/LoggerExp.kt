@@ -6,7 +6,7 @@ import com.hearthappy.processor.utils.DateUtil
 
 const val TAG_VMA = "VMA"
 
-fun KSPLogger.printGenerateTook(count: Int, measureTimeMillis: Long) {
+fun KSPLogger.printGenerateVMATook(count: Int, measureTimeMillis: Long) {
     this.warn("$TAG_VMA: ===================> Generate file count:$count,took:${DateUtil.formatTime(measureTimeMillis)} <===================")
 }
 

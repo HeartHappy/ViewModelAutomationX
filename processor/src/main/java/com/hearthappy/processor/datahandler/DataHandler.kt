@@ -17,6 +17,7 @@ fun <R : Any> List<KSValueArgument>.findArgsValue(paramName: String): R {
 
 
 fun Sequence<KSAnnotation>.findSpecifiedAnt(vararg annotationNames: String) = this.find { annotationNames.contains(it.shortName.asString()) }
+fun Sequence<KSAnnotation>.filterSpecifiedAnt(vararg annotationNames: String) = this.filter { annotationNames.contains(it.shortName.asString()) }
 
 fun String.bindSuffix() = this.removePrefix("Bind")
 
@@ -31,4 +32,14 @@ fun String.publicImport() = if (this == Constant.BIND_LIVE_DATA) Constant.ANDROI
 fun String.privatePropertyName() = "_${this}"
 
 fun String.className2PropertyName() = this.replaceFirstChar { it.lowercaseChar() }
+
+fun String.rename(): String {
+    return convertToCamelCase(this).plus("DataStore")
+}
+
+fun convertToCamelCase(input: String): String {
+    return input.split("_")
+        .joinToString("") { joinStr -> joinStr.replaceFirstChar { it.uppercaseChar() } }
+        .replaceFirstChar { it.lowercaseChar() }
+}
 

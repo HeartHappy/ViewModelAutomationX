@@ -1,7 +1,12 @@
 package com.hearthappy.vma.model.response
 
+import com.hearthappy.annotations.storage.DataStore
+import com.hearthappy.annotations.storage.DataStoreStorage
+
+@DataStore("user_info")
 data class ResImages(
     val code: Int,
+    @DataStoreStorage("MSG")
     val message: String,
     val result: Result
 ) {

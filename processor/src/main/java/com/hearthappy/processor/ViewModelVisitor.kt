@@ -1,30 +1,41 @@
 package com.hearthappy.processor
 
+import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.isAbstract
 import com.google.devtools.ksp.processing.KSPLogger
+import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSPropertyDeclaration
+import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSVisitorVoid
-import com.hearthappy.processor.constant.AndroidTypeNames
-import com.hearthappy.processor.constant.BindFunctionArgs
 import com.hearthappy.processor.constant.Constant
 import com.hearthappy.processor.constant.Constant.APP
-import com.hearthappy.processor.constant.ViewModelAutomationArgs
 import com.hearthappy.processor.datahandler.DataCheck
+import com.hearthappy.processor.datahandler.DataCheck.findAny
 import com.hearthappy.processor.datahandler.bindSuffix
 import com.hearthappy.processor.datahandler.className2PropertyName
+import com.hearthappy.processor.datahandler.findArgsValue
 import com.hearthappy.processor.datahandler.findSpecifiedAnt
 import com.hearthappy.processor.exceptions.VMAAnalysisException
+import com.hearthappy.processor.ext.AndroidTypeNames
+import com.hearthappy.processor.ext.BindFunctionArgs
+import com.hearthappy.processor.ext.DataStoreArgs
+import com.hearthappy.processor.ext.DataStoreStorageArgs
+import com.hearthappy.processor.ext.ViewModelAutomationArgs
 import com.hearthappy.processor.log.TAG_VMA
 import com.hearthappy.processor.log.printVma
 import com.hearthappy.processor.model.FunctionData
 import com.hearthappy.processor.model.GenerateViewModelData
+import com.hearthappy.processor.model.StorageData
+import com.hearthappy.processor.model.StorageList
 import com.hearthappy.processor.model.ViewModelData
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ksp.toTypeName
 
 class ViewModelVisitor(
+    private val resolver: Resolver,
     private val logger: KSPLogger,
     private val generateData: GenerateViewModelData,
     private val index: Int
@@ -49,6 +60,7 @@ class ViewModelVisitor(
         val viewModelData = generateData.viewModelData.get(index = index)
         val functionName = function.simpleName.asString()
         if (DataCheck.isFunction(functionName)) {
+            logger.printVma(viewModelData.enabledLog, "function name: $functionName")
             FunctionData().apply {
                 this.methodName = functionName
                 parsingFunAnnotation(function, this, functionName, viewModelData)
@@ -56,7 +68,6 @@ class ViewModelVisitor(
                 parsingFunReturnType(function, this, viewModelData)
                 viewModelData.functionList.add(this)
             }
-            logger.printVma(viewModelData.enabledLog, "function name: $functionName")
         }
         super.visitFunctionDeclaration(function, data)
     }
@@ -124,8 +135,60 @@ class ViewModelVisitor(
     private fun parsingFunReturnType(function: KSFunctionDeclaration, functionData: FunctionData, viewModelData: ViewModelData) {
         function.returnType?.resolve()?.apply {
             //KSType.toTypeName()扩展函数直接可获取复杂返回类型
-            functionData.returnType = this.toTypeName()
+            functionData.returnType = toTypeName()
             logger.printVma(viewModelData.enabledLog, "function returnType--->${functionData.returnType}")
+
+            parsingStorage(functionData, null, viewModelData.enabledLog)
+        }
+    }
+
+
+    /**
+     * 解析存储方式
+     * @receiver KSType
+     */
+    private fun KSType.parsingStorage(functionData: FunctionData, parent: String?, enabledLog: Boolean) {
+        val classDeclarationByName = resolver.getClassDeclarationByName(toTypeName().toString())
+        classDeclarationByName?.let {
+            val storageData = StorageData()
+            it.annotations.findSpecifiedAnt(Constant.DATASTORE)?.arguments?.forEach {
+                when (it.name?.asString()) {
+                    DataStoreArgs.NAME -> storageData.name = it.value.toString()
+                }
+            }
+
+            it.getAllProperties().forEach {
+                parsingDataStoreStorage(it, parent, functionData, storageData, enabledLog)
+                if (it.type.toTypeName().toString().findAny()) {
+                    val prevParent = parent?.run { this.plus(".").plus(it.simpleName.asString()) } ?: it.simpleName.asString()
+//                logger.printVma(true,"DataStore is Any:${it.simpleName.asString()},${it.type.toTypeName()},prevParent:${prevParent}")
+                    it.type.resolve().parsingStorage(functionData, prevParent, enabledLog)
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 解析响应数据需要存储的字段：DataStore存储
+     * @param it KSPropertyDeclaration
+     * @param parent String?
+     * @param functionData FunctionData
+     */
+    private fun parsingDataStoreStorage(it: KSPropertyDeclaration, parent: String?, functionData: FunctionData, storageData: StorageData, enabledLog: Boolean) {
+        it.annotations.findSpecifiedAnt(Constant.DATASTORE_STORAGE)?.let { findAnt ->
+            //注解只适用基本数据类型，暂不支持对象、集合、数组
+            if (it.type.toTypeName().toString().findAny()) {
+                throw VMAAnalysisException("Annotations are only applicable to basic data types and do not currently support objects, collections, and arrays.property name:${it.simpleName.asString()},TypeName:<${it.type.toTypeName()}>")
+            }
+
+            val key = findAnt.arguments.findArgsValue<String>(DataStoreStorageArgs.KEY)
+            val value = parent?.plus(".")?.plus(it.simpleName.asString()) ?: it.simpleName.asString() //获取message
+            val typeName = it.type.toTypeName().toString()
+            logger.printVma(enabledLog, "DataStoreStorage annotation--->key:$key,--->value:$value,--->type:$typeName,name:${functionData.storageData?.name}")
+            storageData.storageList.add(StorageList(key, value, typeName))
+            functionData.storageData = storageData
+
         }
     }
 

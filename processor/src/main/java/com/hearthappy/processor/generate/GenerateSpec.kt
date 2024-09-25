@@ -62,14 +62,18 @@ class GenerateSpec {
      * @param modifier Array<out KModifier>
      * @return PropertySpec
      */
-    fun generateDelegatePropertySpec(propertyName: String, propertyType: TypeName, delegateValue: String, vararg modifier: KModifier): PropertySpec {
-        return PropertySpec.builder(propertyName, propertyType).delegate("lazy{$delegateValue}").addModifiers(*modifier).build()
+    fun generateDelegatePropertySpec(propertyName: String, receiverType: TypeName?, propertyType: TypeName, delegateValue: String, vararg modifier: KModifier): PropertySpec {
+
+        return PropertySpec.builder(propertyName, propertyType).apply {
+            receiverType?.let { receiver(it) }
+        }.delegate("lazy{$delegateValue}").addModifiers(*modifier).build()
     }
 
 
     internal fun generateFileAndWrite(vma: ViewModelData, generateClass: TypeSpec.Builder, codeGenerator: CodeGenerator) { //创建文件
-        FileSpec.builder(Constant.GENERATE_VIEWMODEL_PKG, vma.className)
-            .addType(generateClass.build()).build().writeTo(codeGenerator, Dependencies(vma.aggregating, vma.containingFile!!))
+        FileSpec.builder(Constant.GENERATE_VIEWMODEL_PKG, vma.className).apply {
+            vma.imports.forEach { addImport(it.packageName, it.simpleName) }
+        }.addType(generateClass.build()).build().writeTo(codeGenerator, Dependencies(vma.aggregating, vma.containingFile!!))
     }
 }
 

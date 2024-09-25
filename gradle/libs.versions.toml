@@ -18,6 +18,8 @@ converterGsonVersion = "2.9.0"
 adapterVesion = "2.3.0"
 okhttp3Version = "4.9.2"
 jetbrainsKotlinJvm = "2.0.20"
+dataStoreVersion = "1.1.1"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -41,6 +43,9 @@ devtools-ksp = { group = "com.google.devtools.ksp", name = "symbol-processing-ap
 squareup-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "converterGsonVersion" }
 squareup-adapter-rxjava2 = { group = "com.squareup.retrofit2", name = "adapter-rxjava2", version.ref = "adapterVesion" }
 squareup-okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp3Version" }
+
+datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "dataStoreVersion" }
+datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "dataStoreVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

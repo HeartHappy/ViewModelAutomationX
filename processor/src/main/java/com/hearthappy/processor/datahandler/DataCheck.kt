@@ -1,5 +1,6 @@
 package com.hearthappy.processor.datahandler
 
+import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.hearthappy.processor.constant.Constant
@@ -15,8 +16,12 @@ object DataCheck {
     fun isReturnType(returnType: String) = !listOf("Boolean", "Int", "Float", "Double", "String").contains(returnType)
 //        !(returnType == "Boolean" || returnType == "Int" || returnType == "Float" || returnType == "Double" || returnType == "String")
 
+    fun String.findAny() = !listOf("kotlin.Boolean", "kotlin.Int", "kotlin.Float", "kotlin.String", "kotlin.Double").contains(this)
+
     //检查函数是否包含注解
     fun KSFunctionDeclaration.isContainsAnnotation() = this.annotations.count() > 0
+
+    fun Sequence<KSAnnotated>.isEmpty() = this.count() == 0
 
     fun KSAnnotation.isVMA() = this.shortName.asString() == Constant.VIEW_MODEL_AUTOMATION
 

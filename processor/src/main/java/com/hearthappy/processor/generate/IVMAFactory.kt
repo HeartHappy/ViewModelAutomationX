@@ -5,7 +5,7 @@ import com.hearthappy.processor.model.ViewModelData
 import com.squareup.kotlinpoet.TypeSpec
 
 
-interface IGenerateFactory {
+interface IVMAFactory {
 
     fun generateViewModel(vma: ViewModelData): TypeSpec.Builder
 
