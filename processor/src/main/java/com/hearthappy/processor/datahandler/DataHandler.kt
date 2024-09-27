@@ -33,8 +33,47 @@ fun String.privatePropertyName() = "_${this}"
 
 fun String.className2PropertyName() = this.replaceFirstChar { it.lowercaseChar() }
 
+/**
+ * 转换成全大写和下划线组合名称
+ * @receiver String
+ * @return String
+ */
+fun String.reConstName(): String {
+    // 使用正则表达式将小写字母和大写字母分开
+    return replace(Regex("([a-z])([A-Z])"), "$1_$2")
+        // 将整个字符串转换为大写
+        .uppercase()
+}
+
+/**
+ * 转换成去下划线和驼峰命名跪着
+ * @receiver String
+ * @return String
+ */
 fun String.rename(): String {
     return convertToCamelCase(this).plus("DataStore")
+}
+
+fun String.renameIt(): String {
+    return this.substring(0, if (this.length > 3) 3 else 1)
+}
+
+
+/**
+ * 转换成文件名格式。例如：UserInfoExt
+ * @receiver String
+ * @return String
+ */
+fun String.reFileName(): String {
+    return this.split("_")
+        .joinToString("") { it.replaceFirstChar { rfc -> rfc.uppercaseChar() } }
+        .replaceFirstChar { it.uppercase() }.plus("Ext")
+}
+
+fun String.rePreferencesKeysName(): String {
+    return this.split("_")
+        .joinToString("") { it.replaceFirstChar { rfc -> rfc.uppercaseChar() } }
+        .replaceFirstChar { it.uppercase() }.plus("Keys")
 }
 
 fun convertToCamelCase(input: String): String {

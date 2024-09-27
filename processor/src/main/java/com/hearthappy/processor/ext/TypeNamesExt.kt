@@ -6,11 +6,11 @@ import com.hearthappy.processor.constant.Constant.APPLICATION
 import com.hearthappy.processor.constant.Constant.APPLICATION_PKG
 import com.hearthappy.processor.constant.Constant.CONTEXT
 import com.hearthappy.processor.constant.Constant.CONTEXT_PKG
-import com.hearthappy.processor.constant.Constant.DATASTORE_EXT_PKG
 import com.hearthappy.processor.constant.Constant.DATASTORE_PKG
 import com.hearthappy.processor.constant.Constant.DATASTORE_PREFERENCES_CORE_PKG
 import com.hearthappy.processor.constant.Constant.DATASTORE_PREFERENCES_PKG
 import com.hearthappy.processor.constant.Constant.FLOW_RESULT
+import com.hearthappy.processor.constant.Constant.GENERATE_DATASTORE_PKG
 import com.hearthappy.processor.constant.Constant.LIVEDATA
 import com.hearthappy.processor.constant.Constant.LIVE_DATA_RESULT
 import com.hearthappy.processor.constant.Constant.MUTABLE_LIVEDATA
@@ -47,7 +47,7 @@ object VMANetworkTypeNames {
 object DataStoreTypeNames {
     internal val DataStore = ClassName(DATASTORE_PKG, "DataStore")
     internal val DataStorePreferences = ClassName(DATASTORE_PREFERENCES_PKG, "preferencesDataStore")
-    internal val DataStoreExt = ClassName(DATASTORE_EXT_PKG, "dataStore")
+    internal val DataStorePreferencesKeys = ClassName(GENERATE_DATASTORE_PKG, "PreferencesKeys")
     internal val DataStorePreferencesCore = ClassName(DATASTORE_PREFERENCES_CORE_PKG, "Preferences")
     internal val DataStorePreferencesAdapter = ClassName(DATASTORE_PREFERENCES_CORE_PKG, "DataStorePreferencesAdapter")
     internal val DataStoreEdit = ClassName(DATASTORE_PREFERENCES_CORE_PKG, "edit")
@@ -62,6 +62,7 @@ object DataStoreTypeNames {
 
 object KotlinTypeNames {
     val UNIT = ClassName("kotlin", "Unit")
+    val String = ClassName("kotlin", "String")
     val CONTINUATION = ClassName("kotlin.coroutines", "Continuation")
     val COROUTINE_SCOPE = ClassName("kotlinx.coroutines", "CoroutineScope")
     val CHANNEL = ClassName("kotlinx.coroutines.channels", "Channel")

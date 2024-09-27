@@ -25,7 +25,7 @@ class GenerateSpec {
      * @param superClassName ClassName? 继承父类ClassName
      * @return TypeSpec.Builder
      */
-    fun generateClass(className: String, constructorParameters: List<ParameterSpec> = listOf(), isAddConstructorProperty: Boolean = true, superClassName: ClassName? = null): TypeSpec.Builder {
+    fun generateClass(className: String, constructorParameters: List<ParameterSpec> = listOf(), superClassName: ClassName? = null,isAddConstructorProperty: Boolean = true): TypeSpec.Builder {
         return TypeSpec.classBuilder(className).apply {
             if (constructorParameters.isNotEmpty()) { //创建构造参数
                 primaryConstructor(FunSpec.constructorBuilder().addParameters(constructorParameters).build())
@@ -73,7 +73,7 @@ class GenerateSpec {
     internal fun generateFileAndWrite(vma: ViewModelData, generateClass: TypeSpec.Builder, codeGenerator: CodeGenerator) { //创建文件
         FileSpec.builder(Constant.GENERATE_VIEWMODEL_PKG, vma.className).apply {
             vma.imports.forEach { addImport(it.packageName, it.simpleName) }
-        }.addType(generateClass.build()).build().writeTo(codeGenerator, Dependencies(vma.aggregating, vma.containingFile!!))
+        }.addType(generateClass.build()).build().writeTo(codeGenerator, Dependencies(true, vma.containingFile!!))
     }
 }
 

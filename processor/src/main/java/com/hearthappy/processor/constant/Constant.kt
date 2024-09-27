@@ -1,14 +1,12 @@
 package com.hearthappy.processor.constant
 
-import javax.naming.Context
-
 object Constant {
 
     //注解
     const val VIEW_MODEL_AUTOMATION = "ViewModelAutomation"
     const val BIND_STATE_FLOW = "BindStateFlow"
     const val BIND_LIVE_DATA = "BindLiveData"
-    const val DATASTORE_STORAGE = "DataStoreStorage"
+    const val DATA_WRITE = "DataWrite"
     const val DATASTORE = "DataStore"
     const val FILE_STORAGE = "FileStorage"
 
@@ -37,11 +35,8 @@ object Constant {
 
     //DataStore相关包
     const val DATASTORE_PKG = "androidx.datastore.core"
-    const val DATASTORE_EXT_PKG = GENERATE_DATASTORE_PKG
     const val DATASTORE_PREFERENCES_CORE_PKG = "androidx.datastore.preferences.core"
     const val DATASTORE_PREFERENCES_PKG = "androidx.datastore.preferences"
-
-
 
 
     //其他常用命名
@@ -49,5 +44,8 @@ object Constant {
 
     //转义符
     const val INDENTATION = "\t"
+
+    //修改DataStore生成文件路径
+    //将PreferencesKeys对象写入对应的Ext文件中
 
 }

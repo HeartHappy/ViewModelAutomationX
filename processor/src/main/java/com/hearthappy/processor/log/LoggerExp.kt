@@ -5,6 +5,7 @@ import com.google.devtools.ksp.symbol.KSType
 import com.hearthappy.processor.utils.DateUtil
 
 const val TAG_VMA = "VMA"
+const val TAG_DataStore = "DataStore"
 
 fun KSPLogger.printGenerateVMATook(count: Int, measureTimeMillis: Long) {
     this.warn("$TAG_VMA: ===================> Generate file count:$count,took:${DateUtil.formatTime(measureTimeMillis)} <===================")
@@ -19,6 +20,12 @@ fun KSPLogger.printVma(enableLog: Boolean = true, msg: String) {
         this.warn("$TAG_VMA: $msg ")
     }
 }
+fun KSPLogger.printDataStore(enableLog: Boolean = true, msg: String) {
+    if (enableLog) {
+        this.warn("$TAG_DataStore: $msg ")
+    }
+}
+
 
 fun KSPLogger.printStart() {
     this.warn("========================================start=================================================")

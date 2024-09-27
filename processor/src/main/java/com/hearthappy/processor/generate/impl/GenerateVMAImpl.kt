@@ -3,12 +3,14 @@ package com.hearthappy.processor.generate.impl
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
 import com.hearthappy.processor.constant.Constant
-import com.hearthappy.processor.constant.Constant.DATASTORE_EXT_PKG
 import com.hearthappy.processor.constant.Constant.FLOW_RESULT
 import com.hearthappy.processor.constant.Constant.INDENTATION
 import com.hearthappy.processor.constant.Constant.LIVE_DATA_RESULT
 import com.hearthappy.processor.datahandler.privatePropertyName
+import com.hearthappy.processor.datahandler.reConstName
+import com.hearthappy.processor.datahandler.rePreferencesKeysName
 import com.hearthappy.processor.datahandler.rename
+import com.hearthappy.processor.datahandler.renameIt
 import com.hearthappy.processor.ext.DataStoreTypeNames
 import com.hearthappy.processor.ext.LifecyclesTypeNames
 import com.hearthappy.processor.ext.VMANetworkTypeNames
@@ -17,6 +19,7 @@ import com.hearthappy.processor.generate.GenerateSpec
 import com.hearthappy.processor.generate.IVMAFactory
 import com.hearthappy.processor.log.printVma
 import com.hearthappy.processor.model.FunctionData
+import com.hearthappy.processor.model.StorageList
 import com.hearthappy.processor.model.ViewModelData
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
@@ -96,24 +99,74 @@ class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
         addStatement("%L%L.value = %L.Succeed(it)", INDENTATION, fd.propertyAliasName.privatePropertyName(), resultType)
         addStatement("}, onThrowable = {")
         addStatement("%L%L.value = %L.Throwable(it)", INDENTATION, fd.propertyAliasName.privatePropertyName(), resultType)
-        fd.storageData?.apply {
-            if (this.storageList.isNotEmpty()) {
-                val dataStoreRename = this.name?.rename() ?: "dataStore"
-                val preferences = "preferences"
-                vma.imports.add(ClassName(DATASTORE_EXT_PKG, dataStoreRename))
-                vma.imports.add(DataStoreTypeNames.DataStoreEdit)
-                addStatement("}, onDataStore = {")
-                addStatement("%L%L.%L.edit { %L->", INDENTATION, Constant.APP, dataStoreRename, preferences)
-                this.storageList.forEach {
-                    // preferences[stringPreferencesKey(PreferencesKeys.IMAGE_URL)] = it.message
-                    addStatement("%L%L%L[%L(%L)] = it.%L", INDENTATION, INDENTATION, preferences, it.type.string2preferenceType(vma.imports), it.key, it.value)
-                }
-                addStatement("%L}", INDENTATION)
-            }
-        }
-
+        generateOnDataStore(fd, vma)
         addStatement("})")
     }
 
+    private fun FunSpec.Builder.generateOnDataStore(fd: FunctionData, vma: ViewModelData) {
+        fd.storageData?.apply {
+            this.name?.let { name ->
+                val dataStorePropertyName = name.rename()
+                val dataStorePreferencesKeys = name.rePreferencesKeysName()
+                if (this.storageList.isNotEmpty()) {
+                    val preferences = "preferences"
+                    vma.imports.add(ClassName(Constant.GENERATE_DATASTORE_PKG, dataStorePropertyName))
+                    vma.imports.add(ClassName(Constant.GENERATE_DATASTORE_PKG, dataStorePreferencesKeys))
+                    vma.imports.add(DataStoreTypeNames.DataStoreEdit)
+//                    vma.imports.add(DataStoreTypeNames.DataStorePreferencesKeys)
+                    addStatement("}, onDataStore = {")
+                    addStatement("%L%L.%L.edit { %L->", INDENTATION, Constant.APP, dataStorePropertyName, preferences)
+                    this.storageList.forEach {
+                        if (it.value.contains("?")) {
+                            handlingLetFunc(it, preferences, vma, name)
+                        } else {
+                            // preferences[stringPreferencesKey(PreferencesKeys.IMAGE_URL)] = it.message
+                            addStatement("%L%L%L[%L(%L.%L)] = it.%L", INDENTATION, INDENTATION, preferences, it.type.string2preferenceType(vma.imports), dataStorePreferencesKeys, it.key.reConstName(), it.value)
+                        }
+                    }
+                    addStatement("%L}", INDENTATION)
+                }
+            }
+        }
+    }
+
+    /**
+     * 使用let函数处理空判定
+     * @receiver FunSpec.Builder
+     * @param storageList StorageList
+     * @param preferences String
+     * @param vma ViewModelData
+     */
+    private fun FunSpec.Builder.handlingLetFunc(storageList: StorageList, preferences: String, vma: ViewModelData, name: String) {
+        val split = storageList.value.split("?.")
+        var letFun = ""
+        var endLetFun = ""
+        var parentAlias = ""
+        split.forEachIndexed { index, param ->
+            parentAlias = parentAlias.ifEmpty { param.renameIt() }
+            val prefix = if (index == 0) "it" else parentAlias
+            if (index == split.size - 1) return@forEachIndexed
+            letBlock(prefix, param) { l, e ->
+                letFun += l
+                endLetFun += e
+            }
+            parentAlias = param.renameIt()
+        }
+        logger.printVma(true, "split:${letFun},${endLetFun}")
+        addStatement("%L", letFun)
+        addStatement("%L[%L(%L.%L)] = %L.%L", preferences, storageList.type.string2preferenceType(vma.imports), name.rePreferencesKeysName(), storageList.key.reConstName(), split[split.size - 2].renameIt(), split[split.size - 1])
+        addStatement("%L", endLetFun)
+
+        // split:result list id
+        //it.result?.let { preferences[stringPreferencesKey(PreferencesKeys.ACCOUNT)] = it.account }
+
+
+        //只实现一层空判
+        //addStatement("%L%Lit.%L?.let{%L-> %L[%L(PreferencesKeys.%L)] = %L.%L}", INDENTATION, INDENTATION, result,resultRename,preferences, it.type.string2preferenceType(vma.imports), it.key.reConstName(),resultRename, data)
+    }
+
+    private inline fun letBlock(prefix: String, param: String, block: (String, String) -> Unit) {
+        block("$prefix.$param?.let { ${param.renameIt()} ->", "}")
+    }
 
 }

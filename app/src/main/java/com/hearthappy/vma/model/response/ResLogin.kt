@@ -1,21 +1,23 @@
 package com.hearthappy.vma.model.response
 
 import com.hearthappy.annotations.storage.DataStore
-import com.hearthappy.annotations.storage.DataStoreStorage
+import com.hearthappy.annotations.storage.DataWrite
 
-@DataStore("user_preferences")
+@DataStore("user_info")
 data class ResLogin(
     val code: Int,
-    @DataStoreStorage("msg")
+    @DataWrite("msg")
     val message: String,
-    val result: Result?
+    val result: Result
 ) {
     data class Result(
+        @DataWrite("account")
         val account: String,
         val createdAt: String,
         val deletedAt: Any,
         val id: Int,
         val level: Int,
+        @DataWrite("token")
         val token: String,
         val updatedAt: String
     )

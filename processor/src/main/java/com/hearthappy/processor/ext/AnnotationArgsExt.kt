@@ -17,6 +17,6 @@ object DataStoreArgs {
     const val AGGREGATING = "aggregating"
 }
 
-object DataStoreStorageArgs {
+object WriteArgs {
     const val KEY = "key"
 }

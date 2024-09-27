@@ -12,4 +12,11 @@ class DataStoreData {
     var containingFile: KSFile? = null
     var aggregating: Boolean = false
     var enabledLog: Boolean = false
+    var storageMap = mutableMapOf<String, String>()
+
+    override fun toString(): String {
+        return "DataStoreData(name='$name', propertyType=$propertyType, containingFile=$containingFile, aggregating=$aggregating, enabledLog=$enabledLog)"
+    }
+
+
 }
