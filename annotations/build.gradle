@@ -1,7 +1,26 @@
 plugins {
     id 'java-library'
 //    id "org.jetbrains.kotlin.jvm"
+    id 'maven-publish'
     alias(libs.plugins.jetbrains.kotlin.jvm)
+}
+group("com.hearthappy")
+version("1.0.0")
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier.set("sources")
+}
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.hearthappy'
+            artifactId = 'annotations'
+            version = '1.0.0'
+            artifact sourceJar
+            from components.java
+        }
+    }
 }
 
 java {

@@ -12,9 +12,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_preferences")
 
@@ -44,62 +42,6 @@ suspend inline fun <reified R : Any> DataStore<Preferences>.readMultiple(vararg 
             else         -> Unit
         }
 
-    }.toTypedArray()
-    block(array)
-}
-
-suspend inline fun DataStore<Preferences>.readMultipleString(vararg keys: String, block: (Array<String?>) -> Unit) {
-    val preferences = this.data.first()
-    val array = keys.map {
-        preferences[stringPreferencesKey(it)]
-    }.toTypedArray()
-    block(array)
-}
-
-suspend inline fun DataStore<Preferences>.readMultipleInt(vararg keys: String, block: (Array<Int?>) -> Unit) {
-    val preferences = this.data.first()
-    val array = keys.map {
-        preferences[intPreferencesKey(it)]
-    }.toTypedArray()
-    block(array)
-}
-
-suspend inline fun DataStore<Preferences>.readMultipleLong(vararg keys: String, block: (Array<Long?>) -> Unit) {
-    val preferences = this.data.first()
-    val array = keys.map {
-        preferences[longPreferencesKey(it)]
-    }.toTypedArray()
-    block(array)
-}
-
-suspend inline fun DataStore<Preferences>.readMultipleBoolean(vararg keys: String, block: (Array<Boolean?>) -> Unit) {
-    val preferences = this.data.first()
-    val array = keys.map {
-        preferences[booleanPreferencesKey(it)]
-    }.toTypedArray()
-    block(array)
-}
-
-suspend inline fun DataStore<Preferences>.readMultipleFloat(vararg keys: String, block: (Array<Float?>) -> Unit) {
-    val preferences = this.data.first()
-    val array = keys.map {
-        preferences[floatPreferencesKey(it)]
-    }.toTypedArray()
-    block(array)
-}
-
-suspend inline fun DataStore<Preferences>.readMultipleDouble(vararg keys: String, block: (Array<Double?>) -> Unit) {
-    val preferences = this.data.first()
-    val array = keys.map {
-        preferences[doublePreferencesKey(it)]
-    }.toTypedArray()
-    block(array)
-}
-
-suspend inline fun DataStore<Preferences>.readMultipleByteArray(vararg keys: String, block: (Array<ByteArray?>) -> Unit) {
-    val preferences = this.data.first()
-    val array = keys.map {
-        preferences[byteArrayPreferencesKey(it)]
     }.toTypedArray()
     block(array)
 }

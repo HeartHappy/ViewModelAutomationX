@@ -1,7 +1,43 @@
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
     alias(libs.plugins.kotlin.android)
-//    id 'org.jetbrains.kotlin.android'
+}
+group("com.hearthappy")
+version("1.0.0")
+// Notice: 2022/1/11 Android依赖发布函数库
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set("javadoc")
+    from javadoc.destinationDir
+}
+
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier.set("sources")
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.hearthappy.vma-ktx'
+                artifactId = 'vma-ktx'
+                version = '1.0.0'
+                artifacts {
+                    archives(javadocJar)
+                    archives(sourceJar)
+                }
+            }
+        }
+    }
 }
 
 android {
