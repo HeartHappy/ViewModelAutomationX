@@ -4,9 +4,9 @@ import com.hearthappy.annotations.BindLiveData
 import com.hearthappy.annotations.BindStateFlow
 import com.hearthappy.annotations.ViewModelAutomation
 import com.hearthappy.vma.model.request.LoginBody
+import com.hearthappy.vma.model.response.BaseData
 import com.hearthappy.vma.model.response.ResImages
 import com.hearthappy.vma.model.response.ResLogin
-import com.hearthappy.vma.model.response.BaseData
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -14,7 +14,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-@ViewModelAutomation("MainTestViewModel", enableLog = true)
+@ViewModelAutomation("MainViewModel")
 interface ApiService {
 
 
@@ -25,6 +25,7 @@ interface ApiService {
     @BindStateFlow("getImages", "sfImages")
     @GET("getImages")
     suspend fun getImage(@Query("page") page: Int, @Query("size") size: Int): ResImages
+
 
     @BindLiveData("getToken")
     @POST("room/getEasemob/token")

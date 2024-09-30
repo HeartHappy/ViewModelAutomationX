@@ -18,7 +18,6 @@ import com.hearthappy.processor.log.printGenerateStart
 import com.hearthappy.processor.log.printGenerateVMATook
 import com.hearthappy.processor.log.printParsing
 import com.hearthappy.processor.log.printStart
-import com.hearthappy.processor.log.printVma
 import com.hearthappy.processor.model.GenerateViewModelData
 import kotlin.system.measureTimeMillis
 

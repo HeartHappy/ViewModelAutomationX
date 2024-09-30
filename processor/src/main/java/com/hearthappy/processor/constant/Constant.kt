@@ -45,6 +45,11 @@ object Constant {
     //转义符
     const val INDENTATION = "\t"
 
+    //默认值:
+    const val WRITE_DEFAULT = "value is empty"
+    const val READ_DEFAULT = "The value of key was not found"
+
+
     //修改DataStore生成文件路径
     //将PreferencesKeys对象写入对应的Ext文件中
 

@@ -3,17 +3,17 @@ package com.hearthappy.vma.model.response
 import com.hearthappy.annotations.storage.DataStore
 import com.hearthappy.annotations.storage.DataWrite
 
-@DataStore("user_image_table", true)
+@DataStore("user_image_table")
 data class ResImages(
     @DataWrite("code")
     val code: Int,
 
     @DataWrite("msg")
     val message: String,
-    val result: Result?
+    val result: Result
 ) {
     data class Result(
-        val list: List<Data>,
+        val data: List<Data>,
         @DataWrite("total")
         val total: Int
     ) {

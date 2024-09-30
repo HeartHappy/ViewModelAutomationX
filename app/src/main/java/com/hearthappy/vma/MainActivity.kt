@@ -10,8 +10,7 @@ import com.hearthappy.viewmodelautomation.databinding.ActivityMainBinding
 import com.hearthappy.vma.api.RetrofitManage
 import com.hearthappy.vma.generate.datastore.UserInfoKeys
 import com.hearthappy.vma.generate.datastore.userInfoDataStore
-import com.hearthappy.vma.generate.viewmodel.MainTestViewModel
-import com.hearthappy.vma.model.read
+import com.hearthappy.vma.generate.viewmodel.MainViewModel
 import com.hearthappy.vma.model.readMultiple
 import com.hearthappy.vma.model.request.LoginBody
 import com.hearthappy.vma_ktx.factory.vma
@@ -25,7 +24,7 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: MainTestViewModel by vma { RetrofitManage.apiService }
+    private val viewModel: MainViewModel by vma { RetrofitManage.apiService }
 
 
     private lateinit var viewBinding: ActivityMainBinding
@@ -93,15 +92,14 @@ class MainActivity : AppCompatActivity() {
             }
             btnGetStorageData.setOnClickListener {
                 lifecycleScope.launch {
-                    val token = userInfoDataStore.read(UserInfoKeys.TOKEN)
+//                    val token = userInfoDataStore.read(UserInfoKeys.TOKEN)
                     userInfoDataStore.readMultiple(UserInfoKeys.TOKEN) {
                         withContext(Dispatchers.Main) {
-                            it.forEach { _ ->
-                                showMessage("token:${token}")
+                            it.forEach { f ->
+                                showMessage("token:${f}")
                             }
                         }
                     }
-
                 }
             }
         }
@@ -111,7 +109,7 @@ class MainActivity : AppCompatActivity() {
 //        viewModel.getToken("2d173b7b44b0e3a798b38d29c3d6b18f8", "M2012K11AC")
     }
 
-    fun showMessage(message: String?) {
+    private fun showMessage(message: String?) {
         viewBinding.tvResult.text = message
     }
 

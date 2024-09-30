@@ -55,14 +55,15 @@ object DataStoreTypeNames {
     internal val DataStoreIntPreferences = ClassName(DATASTORE_PREFERENCES_CORE_PKG, "intPreferencesKey")
     internal val DataStoreBooleanPreferences = ClassName(DATASTORE_PREFERENCES_CORE_PKG, "booleanPreferencesKey")
     internal val DataStoreLongPreferences = ClassName(DATASTORE_PREFERENCES_CORE_PKG, "longPreferencesKey")
-
-
+    internal val DataStoreFloatPreferences = ClassName(DATASTORE_PREFERENCES_CORE_PKG, "floatPreferencesKey")
+    internal val DataStoreDoublePreferences = ClassName(DATASTORE_PREFERENCES_CORE_PKG, "doublePreferencesKey")
 }
 
 
 object KotlinTypeNames {
     val UNIT = ClassName("kotlin", "Unit")
     val String = ClassName("kotlin", "String")
+    val Int = ClassName("kotlin", "Int")
     val CONTINUATION = ClassName("kotlin.coroutines", "Continuation")
     val COROUTINE_SCOPE = ClassName("kotlinx.coroutines", "CoroutineScope")
     val CHANNEL = ClassName("kotlinx.coroutines.channels", "Channel")

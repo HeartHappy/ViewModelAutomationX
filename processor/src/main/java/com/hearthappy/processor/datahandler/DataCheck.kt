@@ -16,7 +16,7 @@ object DataCheck {
     fun isReturnType(returnType: String) = !listOf("Boolean", "Int", "Float", "Double", "String").contains(returnType)
 //        !(returnType == "Boolean" || returnType == "Int" || returnType == "Float" || returnType == "Double" || returnType == "String")
 
-    fun String.notBasicDataTypes() = listOf("kotlin.Boolean", "kotlin.Int", "kotlin.Float", "kotlin.String", "kotlin.Double").contains(this)
+    fun String?.isBasicDataTypes() = listOf("kotlin.Boolean", "kotlin.Boolean?", "kotlin.Int", "kotlin.Int?", "kotlin.Float", "kotlin.Float?", "kotlin.String", "kotlin.String?", "kotlin.Double", "kotlin.Double?","kotlin.Long","kotlin.Long?").contains(this)
 
     //检查函数是否包含注解
     fun KSFunctionDeclaration.isContainsAnnotation() = this.annotations.count() > 0
@@ -28,6 +28,12 @@ object DataCheck {
     fun KSAnnotation.isBindStateFlow() = this.shortName.asString() == Constant.BIND_STATE_FLOW
 
     fun KSAnnotation.isBindLiveData() = this.shortName.asString() == Constant.BIND_LIVE_DATA
+
+    fun String.isString() = when (this) {
+        "kotlin.String"  -> true
+        "kotlin.String?" -> true
+        else             -> false
+    }
 
     fun isCollectionType(typeName: String): Boolean {
         return typeName.startsWith("kotlin.collections.List") ||

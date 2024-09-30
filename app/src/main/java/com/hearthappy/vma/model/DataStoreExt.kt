@@ -34,7 +34,7 @@ suspend inline fun <reified R : Any> DataStore<Preferences>.readMultiple(vararg 
     val preferences = this.data.first()
     val array = keys.map { key ->
         when (key) {
-            is String    -> preferences[stringPreferencesKey(key)]
+            is String    -> preferences[stringPreferencesKey(key.toString())]
             is Int       -> preferences[intPreferencesKey(key.toString())]
             is Long      -> preferences[longPreferencesKey(key.toString())]
             is Boolean   -> preferences[booleanPreferencesKey(key.toString())]

@@ -10,16 +10,17 @@ import com.hearthappy.processor.datahandler.privatePropertyName
 import com.hearthappy.processor.datahandler.reConstName
 import com.hearthappy.processor.datahandler.rePreferencesKeysName
 import com.hearthappy.processor.datahandler.rename
-import com.hearthappy.processor.datahandler.renameIt
+import com.hearthappy.processor.datahandler.replaceLastQuestionMark
 import com.hearthappy.processor.ext.DataStoreTypeNames
 import com.hearthappy.processor.ext.LifecyclesTypeNames
 import com.hearthappy.processor.ext.VMANetworkTypeNames
+import com.hearthappy.processor.ext.defaultValue
 import com.hearthappy.processor.ext.string2preferenceType
 import com.hearthappy.processor.generate.GenerateSpec
 import com.hearthappy.processor.generate.IVMAFactory
 import com.hearthappy.processor.log.printVma
 import com.hearthappy.processor.model.FunctionData
-import com.hearthappy.processor.model.StorageList
+import com.hearthappy.processor.model.StorageData
 import com.hearthappy.processor.model.ViewModelData
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
@@ -104,11 +105,11 @@ class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
     }
 
     private fun FunSpec.Builder.generateOnDataStore(fd: FunctionData, vma: ViewModelData) {
-        fd.storageData?.apply {
+        fd.storageList?.apply {
             this.name?.let { name ->
                 val dataStorePropertyName = name.rename()
                 val dataStorePreferencesKeys = name.rePreferencesKeysName()
-                if (this.storageList.isNotEmpty()) {
+                if (this.storageData.isNotEmpty()) {
                     val preferences = "preferences"
                     vma.imports.add(ClassName(Constant.GENERATE_DATASTORE_PKG, dataStorePropertyName))
                     vma.imports.add(ClassName(Constant.GENERATE_DATASTORE_PKG, dataStorePreferencesKeys))
@@ -116,14 +117,7 @@ class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
 //                    vma.imports.add(DataStoreTypeNames.DataStorePreferencesKeys)
                     addStatement("}, onDataStore = {")
                     addStatement("%L%L.%L.edit { %L->", INDENTATION, Constant.APP, dataStorePropertyName, preferences)
-                    this.storageList.forEach {
-                        if (it.value.contains("?")) {
-                            handlingLetFunc(it, preferences, vma, name)
-                        } else {
-                            // preferences[stringPreferencesKey(PreferencesKeys.IMAGE_URL)] = it.message
-                            addStatement("%L%L%L[%L(%L.%L)] = it.%L", INDENTATION, INDENTATION, preferences, it.type.string2preferenceType(vma.imports), dataStorePreferencesKeys, it.key.reConstName(), it.value)
-                        }
-                    }
+                    handlerNullProperties(storageData, preferences, vma, name)
                     addStatement("%L}", INDENTATION)
                 }
             }
@@ -131,42 +125,20 @@ class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
     }
 
     /**
-     * 使用let函数处理空判定
+     * 处理 preferences[intPreferencesKey(UserImageTableKeys.CODE)] = it.code 存储
      * @receiver FunSpec.Builder
-     * @param storageList StorageList
+     * @param storageData MutableList<StorageList>
      * @param preferences String
      * @param vma ViewModelData
+     * @param name String
      */
-    private fun FunSpec.Builder.handlingLetFunc(storageList: StorageList, preferences: String, vma: ViewModelData, name: String) {
-        val split = storageList.value.split("?.")
-        var letFun = ""
-        var endLetFun = ""
-        var parentAlias = ""
-        split.forEachIndexed { index, param ->
-            parentAlias = parentAlias.ifEmpty { param.renameIt() }
-            val prefix = if (index == 0) "it" else parentAlias
-            if (index == split.size - 1) return@forEachIndexed
-            letBlock(prefix, param) { l, e ->
-                letFun += l
-                endLetFun += e
+    private fun FunSpec.Builder.handlerNullProperties(storageData: MutableList<StorageData>, preferences: String, vma: ViewModelData, name: String) {
+        storageData.forEach {
+            if (it.actionValue.contains("?")) {//为空的处理
+                addStatement("%L%L%L[%L(%L.%L)] = it.%L?:%L", INDENTATION, INDENTATION, preferences, it.type.string2preferenceType(vma.imports), name.rePreferencesKeysName(), it.key.reConstName(), it.actionValue.replaceLastQuestionMark(), it.type.defaultValue())
+            } else {
+                addStatement("%L%L%L[%L(%L.%L)] = it.%L", INDENTATION, INDENTATION, preferences, it.type.string2preferenceType(vma.imports), name.rePreferencesKeysName(), it.key.reConstName(), it.actionValue)
             }
-            parentAlias = param.renameIt()
         }
-        logger.printVma(true, "split:${letFun},${endLetFun}")
-        addStatement("%L", letFun)
-        addStatement("%L[%L(%L.%L)] = %L.%L", preferences, storageList.type.string2preferenceType(vma.imports), name.rePreferencesKeysName(), storageList.key.reConstName(), split[split.size - 2].renameIt(), split[split.size - 1])
-        addStatement("%L", endLetFun)
-
-        // split:result list id
-        //it.result?.let { preferences[stringPreferencesKey(PreferencesKeys.ACCOUNT)] = it.account }
-
-
-        //只实现一层空判
-        //addStatement("%L%Lit.%L?.let{%L-> %L[%L(PreferencesKeys.%L)] = %L.%L}", INDENTATION, INDENTATION, result,resultRename,preferences, it.type.string2preferenceType(vma.imports), it.key.reConstName(),resultRename, data)
     }
-
-    private inline fun letBlock(prefix: String, param: String, block: (String, String) -> Unit) {
-        block("$prefix.$param?.let { ${param.renameIt()} ->", "}")
-    }
-
 }

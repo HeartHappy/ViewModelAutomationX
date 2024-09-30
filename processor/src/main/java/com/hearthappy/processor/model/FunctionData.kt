@@ -13,10 +13,10 @@ class FunctionData {
     //    var returnParentType: TypeName by Delegates.notNull()
     var returnType: TypeName by Delegates.notNull()
     var annotationType: String by Delegates.notNull()
-    var storageData: StorageData? = null
+    var storageList: StorageList? = null
 
     override fun toString(): String {
-        return "FunctionData(methodName='$methodName', methodAliasName='$methodAliasName', propertyAliasName='$propertyAliasName', parameterList=$parameterList, returnType=$returnType, annotationType='$annotationType', dataStoreList=$storageData)"
+        return "FunctionData(methodName='$methodName', methodAliasName='$methodAliasName', propertyAliasName='$propertyAliasName', parameterList=$parameterList, returnType=$returnType, annotationType='$annotationType', dataStoreList=$storageList)"
     }
 
 

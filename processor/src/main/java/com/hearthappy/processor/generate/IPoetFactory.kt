@@ -30,10 +30,9 @@ interface IPoetFactory {
      * @param superClassName ClassName 继承父类ClassName
      * @param isAddConstructorProperty Boolean 是否添加到全局构造，提供内部使用
      * @return TypeSpec.Builder
+     * @deprecated 创建构造参数复杂的类
      */
-    //创建构造参数复杂的类
     fun createClassSpec(className: String, constructorParameters: List<ParameterSpec>, superClassName: ClassName?, isAddConstructorProperty: Boolean): TypeSpec.Builder
-
 
     //创建属性Spec
     fun createPropertySpec(propertyName: String, typeName: TypeName, receiver: TypeName?, isDelegate: Boolean, codeBlock: CodeBlock, vararg modifiers: KModifier): PropertySpec
@@ -43,7 +42,6 @@ interface IPoetFactory {
 
     //添加委托属性到class
     fun TypeSpec.Builder.addSpecProperty(propertyName: String, typeName: TypeName, receiver: TypeName?, isDelegate: Boolean, delegate: CodeBlock, vararg modifiers: KModifier)
-
 
     //添加所有函数到class
     fun FileSpec.Builder.addFunctionsSpec(methodName: String, parameters: List<ParameterSpec>, methodBody: FunSpec.Builder.() -> Unit)
