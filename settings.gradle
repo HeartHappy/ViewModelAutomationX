@@ -11,11 +11,11 @@ pluginManagement {
         mavenCentral()
 
         maven { url 'https://jitpack.io' }
-        maven { setUrl("https://maven.aliyun.com/repository/central") }
-        maven { setUrl("https://maven.aliyun.com/repository/jcenter") }
-        maven { setUrl("https://maven.aliyun.com/repository/google") }
-        maven { setUrl("https://maven.aliyun.com/repository/gradle-plugin") }
-        maven { setUrl("https://maven.aliyun.com/repository/public") }
+        maven { url("https://maven.aliyun.com/repository/central") }
+        maven { url("https://maven.aliyun.com/repository/jcenter") }
+        maven { url("https://maven.aliyun.com/repository/google") }
+        maven { url("https://maven.aliyun.com/repository/gradle-plugin") }
+        maven { url("https://maven.aliyun.com/repository/public") }
 
     }
 }
@@ -25,14 +25,13 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
-        maven { setUrl("https://maven.aliyun.com/repository/central") }
-        maven { setUrl("https://maven.aliyun.com/repository/jcenter") }
-        maven { setUrl("https://maven.aliyun.com/repository/google") }
-        maven { setUrl("https://maven.aliyun.com/repository/gradle-plugin") }
-        maven { setUrl("https://maven.aliyun.com/repository/public") }
+        maven { url("https://maven.aliyun.com/repository/central") }
+        maven { url("https://maven.aliyun.com/repository/jcenter") }
+        maven { url("https://maven.aliyun.com/repository/google") }
+        maven { url("https://maven.aliyun.com/repository/gradle-plugin") }
+        maven { url("https://maven.aliyun.com/repository/public") }
     }
 }
-
 rootProject.name = "ViewModelAutomationX"
 include ':app'
 include ':annotations'

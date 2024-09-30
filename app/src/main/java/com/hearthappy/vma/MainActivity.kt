@@ -5,8 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.hearthappy.viewmodelautomation.R
-import com.hearthappy.viewmodelautomation.databinding.ActivityMainBinding
+import com.hearthappy.viewmodelautomationx.R
+import com.hearthappy.viewmodelautomationx.databinding.ActivityMainBinding
 import com.hearthappy.vma.api.RetrofitManage
 import com.hearthappy.vma.generate.datastore.UserInfoKeys
 import com.hearthappy.vma.generate.datastore.userInfoDataStore

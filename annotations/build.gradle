@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-//    id "org.jetbrains.kotlin.jvm"
+//    id 'org.jetbrains.kotlin.jvm' version '2.0.20'
     id 'maven-publish'
     alias(libs.plugins.jetbrains.kotlin.jvm)
 }
@@ -24,13 +24,9 @@ publishing {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 compileKotlin {
-    kotlinOptions.jvmTarget = "11"
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "17"
 }
