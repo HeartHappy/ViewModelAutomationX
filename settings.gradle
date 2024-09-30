@@ -33,7 +33,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ViewModelAutomation"
+rootProject.name = "ViewModelAutomationX"
 include ':app'
 include ':annotations'
 include ':vma-ktx'
