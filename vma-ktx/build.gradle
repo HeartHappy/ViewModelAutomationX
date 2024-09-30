@@ -1,7 +1,8 @@
 plugins {
     id 'com.android.library'
     id 'maven-publish'
-    alias(libs.plugins.kotlin.android)
+    id 'org.jetbrains.kotlin.android'
+//    alias(libs.plugins.kotlin.android)
 }
 group("com.hearthappy")
 version("1.0.0")
@@ -42,7 +43,7 @@ afterEvaluate {
 
 android {
     namespace 'com.hearthappy.vma_ktx'
-    compileSdk 34
+    compileSdk 33
 
     defaultConfig {
         minSdk 21
@@ -58,11 +59,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = '11'
     }
 }
 
@@ -70,7 +71,7 @@ dependencies {
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
     implementation libs.material
-    implementation libs.androidx.activity
+//    implementation libs.androidx.activity
     implementation libs.androidx.constraintlayout
     implementation libs.kotlinx.corountines
 

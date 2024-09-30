@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.byteArrayPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
@@ -38,7 +37,7 @@ suspend inline fun <reified R : Any> DataStore<Preferences>.readMultiple(vararg 
             is Boolean   -> preferences[booleanPreferencesKey(key.toString())]
             is Float     -> preferences[floatPreferencesKey(key.toString())]
             is Double    -> preferences[doublePreferencesKey(key.toString())]
-            is ByteArray -> preferences[byteArrayPreferencesKey(key.toString())]
+//            is ByteArray -> preferences[byteArrayPreferencesKey(key.toString())]
             else         -> Unit
         }
 

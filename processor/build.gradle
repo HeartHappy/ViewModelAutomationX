@@ -1,8 +1,10 @@
 plugins {
     id "java-library"
     id 'maven-publish'
-    alias(libs.plugins.jetbrains.kotlin.jvm)
-    alias(libs.plugins.devtools.ksp)
+    id 'org.jetbrains.kotlin.jvm'
+    id 'com.google.devtools.ksp'
+//    alias(libs.plugins.jetbrains.kotlin.jvm)
+//    alias(libs.plugins.devtools.ksp)
 }
 group("com.hearthappy")
 version("1.0.0")
@@ -25,8 +27,8 @@ publishing {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 dependencies {
@@ -39,5 +41,5 @@ dependencies {
 
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "17"
+    kotlinOptions.jvmTarget = "11"
 }
