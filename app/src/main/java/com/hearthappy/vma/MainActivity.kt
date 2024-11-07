@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.lifecycleScope
 import com.hearthappy.viewmodelautomationx.R
 import com.hearthappy.viewmodelautomationx.databinding.ActivityMainBinding
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by vma { RetrofitManage.apiService }
 
+    private val fragments= listOf(MainFragment(),MainFragment())
 
     private lateinit var viewBinding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,9 +40,60 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        viewBinding.apply {
+
+            viewPager.adapter=object : FragmentStatePagerAdapter(supportFragmentManager) {
+                override fun getCount(): Int {
+                    return fragments.size
+                }
+
+                override fun getItem(position: Int): Fragment {
+                    return fragments[position]
+                }
+
+                override fun getPageTitle(position: Int): CharSequence {
+                    return ""
+                }
+            }
+            initListener()
+        }
+
+
+        initViewModelListener()
+
+
+
+        //获取dataStore数据
+
+//        viewModel.getToken("2d173b7b44b0e3a798b38d29c3d6b18f8", "M2012K11AC")
+    }
+
+    private fun ActivityMainBinding.initListener() {
+            btnLogin.setOnClickListener {
+                viewModel.login(LoginBody("1151087058@qq.com", "123456"))
+            }
+
+            btnGetImages.setOnClickListener {
+                viewModel.getImages(1, 10)
+            }
+            btnGetStorageData.setOnClickListener {
+                lifecycleScope.launch {
+    //                    val token = userInfoDataStore.read(UserInfoKeys.TOKEN)
+                    userInfoDataStore.readMultiple(UserInfoKeys.TOKEN) {
+                        withContext(Dispatchers.Main) {
+                            it.forEach { f ->
+                                showMessage("token:${f}")
+                            }
+                        }
+                    }
+                }
+            }
+    }
+
+    private fun initViewModelListener() {
         lifecycleScope.launch {
             viewModel.loginStateFlow
-//                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+    //                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
                 .collect {
                     when (it) {
                         is FlowResult.Default    -> {}
@@ -55,7 +109,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-//            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+    //            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
             viewModel.sfImages.collect {
                 when (it) {
                     is FlowResult.Default    -> {}
@@ -68,8 +122,7 @@ class MainActivity : AppCompatActivity() {
                     is FlowResult.Throwable  -> showMessage(it.asThrowableMessage())
                 }
             }
-//            }
-
+    //            }
         }
 
         viewModel.getTokenLiveData.observe(this@MainActivity) {
@@ -81,32 +134,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-        viewBinding.apply {
-            btnLogin.setOnClickListener {
-                viewModel.login(LoginBody("1151087058@qq.com", "123456"))
-            }
-
-            btnGetImages.setOnClickListener {
-                viewModel.getImages(1, 10)
-            }
-            btnGetStorageData.setOnClickListener {
-                lifecycleScope.launch {
-//                    val token = userInfoDataStore.read(UserInfoKeys.TOKEN)
-                    userInfoDataStore.readMultiple(UserInfoKeys.TOKEN) {
-                        withContext(Dispatchers.Main) {
-                            it.forEach { f ->
-                                showMessage("token:${f}")
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        //获取dataStore数据
-
-//        viewModel.getToken("2d173b7b44b0e3a798b38d29c3d6b18f8", "M2012K11AC")
     }
 
     private fun showMessage(message: String?) {
