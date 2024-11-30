@@ -1,6 +1,7 @@
 package com.hearthappy.vma
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -12,7 +13,7 @@ import com.hearthappy.viewmodelautomationx.databinding.ActivityMainBinding
 import com.hearthappy.vma.api.RetrofitManage
 import com.hearthappy.vma.generate.datastore.UserInfoKeys
 import com.hearthappy.vma.generate.datastore.userInfoDataStore
-import com.hearthappy.vma.generate.viewmodel.MainViewModel
+//import com.hearthappy.vma.generate.viewmodel.MainViewModel
 import com.hearthappy.vma.model.readMultiple
 import com.hearthappy.vma.model.request.LoginBody
 import com.hearthappy.vma_ktx.factory.vma
@@ -26,13 +27,14 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: MainViewModel by vma { RetrofitManage.apiService }
+//    private val viewModel: MainViewModel by vma { RetrofitManage.apiService }
 
     private val fragments= listOf(MainFragment(),MainFragment())
 
     private lateinit var viewBinding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -55,11 +57,15 @@ class MainActivity : AppCompatActivity() {
                     return ""
                 }
             }
-            initListener()
+            lifecycleScope.launch {
+                Log.d(TAG, "onCreate: ")
+                RetrofitManage.apiService.getImage(1,10)
+            }
+//            initListener()
         }
 
 
-        initViewModelListener()
+//        initViewModelListener()
 
 
 
@@ -68,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 //        viewModel.getToken("2d173b7b44b0e3a798b38d29c3d6b18f8", "M2012K11AC")
     }
 
-    private fun ActivityMainBinding.initListener() {
+    /*private fun ActivityMainBinding.initListener() {
             btnLogin.setOnClickListener {
                 viewModel.login(LoginBody("1151087058@qq.com", "123456"))
             }
@@ -134,7 +140,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
+    }*/
 
     private fun showMessage(message: String?) {
         viewBinding.tvResult.text = message

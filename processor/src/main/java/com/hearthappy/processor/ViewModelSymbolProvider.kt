@@ -18,6 +18,7 @@ import com.hearthappy.processor.log.printGenerateStart
 import com.hearthappy.processor.log.printGenerateVMATook
 import com.hearthappy.processor.log.printParsing
 import com.hearthappy.processor.log.printStart
+import com.hearthappy.processor.log.printVma
 import com.hearthappy.processor.model.GenerateViewModelData
 import kotlin.system.measureTimeMillis
 
@@ -36,25 +37,29 @@ class ViewModelSymbolProvider : SymbolProcessorProvider {
         private val viewModelFactory: IVMAFactory
     ) :
         SymbolProcessor {
-        private val viewModelData = GenerateViewModelData()
+        val viewModelData by lazy { GenerateViewModelData() }
 
 
         override fun process(resolver: Resolver): List<KSAnnotated> {
 
             val measureTimeMillis = measureTimeMillis {
-                val vmaSymbols = resolver.getSymbolsWithAnnotation(ViewModelAutomation::class.qualifiedName!!).filter { it.validate() }
+                val vmaSymbols = resolver.getSymbolsWithAnnotation(ViewModelAutomation::class.qualifiedName!!)
+                    .filter { it.validate() }
+//                }
+                logger.printVma(true,"vmaSymbols:${vmaSymbols.count()}")
                 if (vmaSymbols.isEmpty()) return emptyList()
-                parsingVMAProcess(resolver, vmaSymbols, viewModelData)
-                generateVMAProcess()
+                parsingVMAProcess(resolver, vmaSymbols, viewModelData,codeGenerator) // TODO: 导致VMA一直生成文件问题
+                generateVMAProcess(viewModelData)
             }
+            logger.printVma(true,"viewModelData:${viewModelData.viewModelData.size}")
             logger.printGenerateVMATook(viewModelData.viewModelData.size, measureTimeMillis)
 
-
+            viewModelData.viewModelData.clear()
             return emptyList()
         }
 
 
-        private fun generateVMAProcess() {
+        private fun generateVMAProcess(viewModelData:GenerateViewModelData) {
             viewModelData.viewModelData.forEach {
                 viewModelFactory.apply {
                     logger.printGenerateStart(it.enabledLog, it.className)
@@ -68,9 +73,14 @@ class ViewModelSymbolProvider : SymbolProcessorProvider {
             }
         }
 
-        private fun parsingVMAProcess(resolver: Resolver, vmaSymbols: Sequence<KSAnnotated>, generateData: GenerateViewModelData) {
+        private fun parsingVMAProcess(
+            resolver: Resolver,
+            vmaSymbols: Sequence<KSAnnotated>,
+            generateData: GenerateViewModelData,
+            codeGenerator: CodeGenerator
+        ) {
             logger.printStart()
-            vmaSymbols.forEachIndexed { index, it -> it.accept(ViewModelVisitor(resolver, logger, generateData, index), Unit) }
+            vmaSymbols.forEachIndexed { index, it -> it.accept(ViewModelVisitor(resolver, logger, generateData, index,codeGenerator), Unit) }
             logger.printParsing(vmaSymbols.count())
             logger.printEnd()
         }

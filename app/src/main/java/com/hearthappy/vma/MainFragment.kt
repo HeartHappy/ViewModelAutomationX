@@ -7,9 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.hearthappy.viewmodelautomationx.databinding.FragmentMainBinding
-import com.hearthappy.vma.api.RetrofitManage
-import com.hearthappy.vma.generate.viewmodel.MainViewModel
-import com.hearthappy.vma_ktx.factory.vma
 import com.hearthappy.vma_ktx.network.FlowResult
 import com.hearthappy.vma_ktx.network.Result
 import com.hearthappy.vma_ktx.network.asFailedMessage
@@ -24,7 +21,7 @@ import kotlinx.coroutines.launch
  * @description Fragment使用示例
  */
 class MainFragment : Fragment() {
-    private val viewModel: MainViewModel by vma { RetrofitManage.apiService }
+//    private val viewModel: MainViewModel by vma { RetrofitManage.apiService }
     private lateinit var viewBinding: FragmentMainBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -35,11 +32,11 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViewModelListener()
-        viewModel.getImages(1, 10)
+//        initViewModelListener()
+//        viewModel.getImages(1, 10)
     }
 
-    private fun initViewModelListener() {
+   /* private fun initViewModelListener() {
         lifecycleScope.launch {
             viewModel.loginStateFlow
                 //                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
@@ -83,7 +80,7 @@ class MainFragment : Fragment() {
                 }
             }
         }
-    }
+    }*/
 
     private fun showMessage(message: String?) {
         viewBinding.tvResult.text = message

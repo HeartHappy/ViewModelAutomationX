@@ -2,6 +2,8 @@ package com.hearthappy.processor
 
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.isAbstract
+import com.google.devtools.ksp.processing.CodeGenerator
+import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -10,6 +12,7 @@ import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.hearthappy.processor.constant.Constant
 import com.hearthappy.processor.constant.Constant.APP
+import com.hearthappy.processor.constant.Constant.GENERATE_VIEWMODEL_PKG
 import com.hearthappy.processor.datahandler.DataCheck
 import com.hearthappy.processor.datahandler.DataCheck.isBasicDataTypes
 import com.hearthappy.processor.datahandler.bindSuffix
@@ -38,7 +41,8 @@ class ViewModelVisitor(
     private val resolver: Resolver,
     private val logger: KSPLogger,
     private val generateData: GenerateViewModelData,
-    private val index: Int
+    private val index: Int,
+    private val codeGenerator: CodeGenerator
 ) : KSVisitorVoid() {
     override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
         generateData.viewModelData.add(ViewModelData())
