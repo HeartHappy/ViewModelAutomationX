@@ -2,8 +2,6 @@ package com.hearthappy.processor
 
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.isAbstract
-import com.google.devtools.ksp.processing.CodeGenerator
-import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -12,7 +10,6 @@ import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.hearthappy.processor.constant.Constant
 import com.hearthappy.processor.constant.Constant.APP
-import com.hearthappy.processor.constant.Constant.GENERATE_VIEWMODEL_PKG
 import com.hearthappy.processor.datahandler.DataCheck
 import com.hearthappy.processor.datahandler.DataCheck.isBasicDataTypes
 import com.hearthappy.processor.datahandler.bindSuffix
@@ -29,8 +26,8 @@ import com.hearthappy.processor.log.TAG_VMA
 import com.hearthappy.processor.log.printVma
 import com.hearthappy.processor.model.FunctionData
 import com.hearthappy.processor.model.GenerateViewModelData
-import com.hearthappy.processor.model.StorageList
 import com.hearthappy.processor.model.StorageData
+import com.hearthappy.processor.model.StorageList
 import com.hearthappy.processor.model.ViewModelData
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterSpec
@@ -42,7 +39,6 @@ class ViewModelVisitor(
     private val logger: KSPLogger,
     private val generateData: GenerateViewModelData,
     private val index: Int,
-    private val codeGenerator: CodeGenerator
 ) : KSVisitorVoid() {
     override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
         generateData.viewModelData.add(ViewModelData())
@@ -87,7 +83,7 @@ class ViewModelVisitor(
             annotations.findSpecifiedAnt(Constant.VIEW_MODEL_AUTOMATION)?.let {
                 for (argument in it.arguments) {
                     when (argument.name?.asString()) {
-                        ViewModelAutomationArgs.FILENAME    -> className = argument.value.toString()
+                        ViewModelAutomationArgs.FILENAME -> className = argument.value.toString()
                         ViewModelAutomationArgs.ENABLED_LOG -> enabledLog = argument.value as Boolean
                         ViewModelAutomationArgs.AGGREGATING -> aggregating = argument.value as Boolean
                     }
@@ -113,7 +109,7 @@ class ViewModelVisitor(
         function.annotations.findSpecifiedAnt(Constant.BIND_LIVE_DATA, Constant.BIND_STATE_FLOW)?.let {
             for (argument in it.arguments) {
                 when (argument.name?.asString()) {
-                    BindFunctionArgs.METHOD_NAME   -> {
+                    BindFunctionArgs.METHOD_NAME -> {
                         val methodName = argument.value as String
                         functionData.methodAliasName = methodName.isNotEmpty().takeIf { tif -> tif }?.run { methodName } ?: functionName
                     }
@@ -168,11 +164,9 @@ class ViewModelVisitor(
                 val storageKey = it.value.toString()
                 val storageKeyRename = storageKey.reConstName()
                 logger.printVma(
-                    enabledLog, "Write annotation--->storageKey:${storageKey}, " +
-                            "storageValue:${storageValue}, " + //it.result.total.id
+                    enabledLog, "Write annotation--->storageKey:${storageKey}, " + "storageValue:${storageValue}, " + //it.result.total.id
                             "storageKeyRename:${storageKeyRename}, " +//PreferencesKey
-                            "propertyName:${propertyName}, " +
-                            "dataStorePropertyName:${storageList.name}, " +//Context.dataStore扩展属性名
+                            "propertyName:${propertyName}, " + "dataStorePropertyName:${storageList.name}, " +//Context.dataStore扩展属性名
                             "typename:${typeName}, " //stringPreferencesKey
                 )
                 //最后一个如果是空则添加后缀?

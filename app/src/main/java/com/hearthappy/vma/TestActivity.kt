@@ -16,6 +16,6 @@ class TestActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        Log.d("TAG", "onCreate: ")
+        Log.d("TAG", "onCreate: 用来测试与符号文件不相关的文件，是否触发KSP生成")
     }
 }

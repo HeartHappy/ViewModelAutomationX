@@ -13,6 +13,7 @@ import com.hearthappy.viewmodelautomationx.databinding.ActivityMainBinding
 import com.hearthappy.vma.api.RetrofitManage
 import com.hearthappy.vma.generate.datastore.UserInfoKeys
 import com.hearthappy.vma.generate.datastore.userInfoDataStore
+import com.hearthappy.vma.generate.viewmodel.MainViewModel
 //import com.hearthappy.vma.generate.viewmodel.MainViewModel
 import com.hearthappy.vma.model.readMultiple
 import com.hearthappy.vma.model.request.LoginBody
@@ -27,7 +28,7 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
-//    private val viewModel: MainViewModel by vma { RetrofitManage.apiService }
+    private val viewModel: MainViewModel by vma { RetrofitManage.apiService }
 
     private val fragments= listOf(MainFragment(),MainFragment())
 
@@ -58,14 +59,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             lifecycleScope.launch {
-                Log.d(TAG, "onCreate: ")
                 RetrofitManage.apiService.getImage(1,10)
             }
-//            initListener()
+            initListener()
         }
 
 
-//        initViewModelListener()
+        initViewModelListener()
 
 
 
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 //        viewModel.getToken("2d173b7b44b0e3a798b38d29c3d6b18f8", "M2012K11AC")
     }
 
-    /*private fun ActivityMainBinding.initListener() {
+    private fun ActivityMainBinding.initListener() {
             btnLogin.setOnClickListener {
                 viewModel.login(LoginBody("1151087058@qq.com", "123456"))
             }
@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }*/
+    }
 
     private fun showMessage(message: String?) {
         viewBinding.tvResult.text = message

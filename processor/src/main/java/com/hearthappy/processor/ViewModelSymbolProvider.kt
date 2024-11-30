@@ -37,7 +37,7 @@ class ViewModelSymbolProvider : SymbolProcessorProvider {
         private val viewModelFactory: IVMAFactory
     ) :
         SymbolProcessor {
-        val viewModelData by lazy { GenerateViewModelData() }
+        private val viewModelData by lazy { GenerateViewModelData() }
 
 
         override fun process(resolver: Resolver): List<KSAnnotated> {
@@ -45,21 +45,17 @@ class ViewModelSymbolProvider : SymbolProcessorProvider {
             val measureTimeMillis = measureTimeMillis {
                 val vmaSymbols = resolver.getSymbolsWithAnnotation(ViewModelAutomation::class.qualifiedName!!)
                     .filter { it.validate() }
-//                }
-                logger.printVma(true,"vmaSymbols:${vmaSymbols.count()}")
                 if (vmaSymbols.isEmpty()) return emptyList()
-                parsingVMAProcess(resolver, vmaSymbols, viewModelData,codeGenerator) // TODO: 导致VMA一直生成文件问题
-                generateVMAProcess(viewModelData)
+                parsingVMAProcess(resolver, vmaSymbols, viewModelData)
+                generateVMAProcess()
             }
-            logger.printVma(true,"viewModelData:${viewModelData.viewModelData.size}")
             logger.printGenerateVMATook(viewModelData.viewModelData.size, measureTimeMillis)
 
-            viewModelData.viewModelData.clear()
             return emptyList()
         }
 
 
-        private fun generateVMAProcess(viewModelData:GenerateViewModelData) {
+        private fun generateVMAProcess() {
             viewModelData.viewModelData.forEach {
                 viewModelFactory.apply {
                     logger.printGenerateStart(it.enabledLog, it.className)
@@ -77,10 +73,9 @@ class ViewModelSymbolProvider : SymbolProcessorProvider {
             resolver: Resolver,
             vmaSymbols: Sequence<KSAnnotated>,
             generateData: GenerateViewModelData,
-            codeGenerator: CodeGenerator
         ) {
             logger.printStart()
-            vmaSymbols.forEachIndexed { index, it -> it.accept(ViewModelVisitor(resolver, logger, generateData, index,codeGenerator), Unit) }
+            vmaSymbols.forEachIndexed { index, it -> it.accept(ViewModelVisitor(resolver, logger, generateData, index), Unit) }
             logger.printParsing(vmaSymbols.count())
             logger.printEnd()
         }

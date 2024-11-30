@@ -71,18 +71,13 @@ class GenerateSpec {
 
 
     internal fun generateFileAndWrite(vma: ViewModelData, generateClass: TypeSpec.Builder, codeGenerator: CodeGenerator) { //创建文件
-        codeGenerator.createNewFile(Dependencies(vma.aggregating, vma.containingFile!!),Constant.GENERATE_VIEWMODEL_PKG,vma.className).bufferedWriter().apply {
-            write("""
-        |
-        |class ${vma.className} {
-        |    // Generated class content goes here.
-        |}
-        """.trimMargin())
-            flush()
-        }
+        val fileSpec = FileSpec.builder(Constant.GENERATE_VIEWMODEL_PKG, vma.className).apply {
+            vma.imports.forEach { addImport(it.packageName, it.simpleName) }
+        }.addType(generateClass.build()).build()
+        codeGenerator.createNewFile(Dependencies(vma.aggregating, vma.containingFile!!),Constant.GENERATE_VIEWMODEL_PKG,vma.className).bufferedWriter().use { fileSpec.writeTo(it) }
 //        FileSpec.builder(Constant.GENERATE_VIEWMODEL_PKG, vma.className).apply {
 //            vma.imports.forEach { addImport(it.packageName, it.simpleName) }
-//        }.addType(generateClass.build()).build().writeTo(codeGenerator, Dependencies(true, vma.containingFile!!))
+//        }.addType(generateClass.build()).build().writeTo(codeGenerator, Dependencies(vma.aggregating, vma.containingFile!!))
     }
 }
 
