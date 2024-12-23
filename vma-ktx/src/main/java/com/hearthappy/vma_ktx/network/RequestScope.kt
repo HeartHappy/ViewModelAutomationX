@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
  * @param onThrowable Function1<Throwable, Unit>
  * @param dispatcher CoroutineDispatcher
  */
-inline fun <reified R : Any> ViewModel.requestScopeX(crossinline io: suspend () -> R, crossinline onSucceed: (R) -> Unit, crossinline onThrowable: (Throwable) -> Unit, crossinline onDataStore:suspend CoroutineScope.(R) -> Unit = {}, dispatcher: CoroutineDispatcher = Dispatchers.Main) {
+inline fun <reified R : Any> ViewModel.requestScopeX(crossinline io: suspend () -> R, crossinline onSucceed: (R) -> Unit, crossinline onThrowable: (Throwable) -> Unit, crossinline onDataStore: suspend CoroutineScope.(R) -> Unit = {}, dispatcher: CoroutineDispatcher = Dispatchers.Main) {
 
     viewModelScope.launch(Dispatchers.IO) {
         try {
@@ -49,7 +49,7 @@ fun <R> ViewModel.requestScope(io: suspend () -> R, onSucceed: (R) -> Unit, onTh
 suspend fun withMainCoroutine(dispatcher: CoroutineDispatcher, block: () -> Unit) {
     when (dispatcher) {
         is MainCoroutineDispatcher -> withContext(Dispatchers.Main) { block() }
-        else                       -> block()
+        else -> block()
     }
 }
 

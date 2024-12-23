@@ -50,9 +50,10 @@ dependencies {
     implementation libs.androidx.activity
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
-//    androidTestImplementation libs.androidx.espresso.core
 
 
+    implementation libs.androidx.activity.ktx
+    implementation libs.androidx.fragment.ktx
     implementation libs.lifecycle.runtime.ktx
     implementation libs.lifecycle.viewmodel.ktx
     implementation libs.squareup.converter.gson
@@ -68,10 +69,13 @@ dependencies {
     implementation libs.datastore.preferences
     implementation libs.datastore.preferences.core
 
+//    implementation 'com.github.HeartHappy.ViewModelAutomationX:annotations:1.0.5'
+//    implementation 'com.github.HeartHappy.ViewModelAutomationX:vma-ktx:1.0.5'
+//    ksp 'com.github.HeartHappy.ViewModelAutomationX:processor:1.0.5'
+
     implementation project(':vma-ktx')
     implementation project(':annotations')
-//    implementation project
-
-    //注意：要求jdk11才能将生成文件作为资源引用
+//
+//    //注意：要求jdk11才能将生成文件作为资源引用
     ksp project(":processor")
 }

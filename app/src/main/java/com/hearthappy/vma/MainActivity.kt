@@ -28,14 +28,12 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: MainViewModel by vma { RetrofitManage.apiService }
-
+    private val viewModel: MainViewModel by vma(RetrofitManage.apiService)
     private val fragments= listOf(MainFragment(),MainFragment())
 
     private lateinit var viewBinding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -64,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             initListener()
         }
 
-
+        Log.d(TAG, "onCreate: ${System.identityHashCode(viewModel)}")
         initViewModelListener()
 
 

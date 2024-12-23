@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.SSLContext
 
 object RetrofitManage {
     private val retrofit: Retrofit by lazy { initRetrofit() }
@@ -12,7 +13,7 @@ object RetrofitManage {
     private const val READ_TIMEOUT = 100L
     private const val WRITE_TIMEOUT = 60L
 
-        private const val BASE_URL = "https://api.apiopen.top/api/"
+        private const val BASE_URL = "http://api.apiopen.top/api/"
 //    private const val BASE_URL = "http://yyapi.study68.cn/"
 
     private fun initRetrofit(): Retrofit {
