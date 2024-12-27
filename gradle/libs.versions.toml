@@ -4,16 +4,16 @@ kotlin = "2.0.10"
 jetbrainsKotlinJvm = "2.0.10"
 kotlinReflectVersion = "1.6.0"
 kotlinxCorountinesVersion = "1.6.0"
-coreKtx = "1.10.1"
+coreKtx = "1.6.0"
 
 junit = "4.13.2"
 junitVersion = "1.1.3"
-espressoCore = "3.4.0"
+espressoCore = "3.3.0"
 
-appcompat = "1.4.0"
-fragmentKtxVersion = "1.6.0"
+appcompat = "1.3.0"
+fragmentKtxVersion = "1.5.0"
 material = "1.4.0"
-activity = "1.7.0"
+activity = "1.5.0"
 constraintlayout = "2.0.4"
 lifecycleVersion = "2.3.0"
 
@@ -24,7 +24,7 @@ converterGsonVersion = "2.9.0"
 adapterVesion = "2.3.0"
 okhttp3Version = "4.9.2"
 
-dataStoreVersion = "1.0.0-rc01"
+dataStoreVersion = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

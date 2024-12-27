@@ -13,7 +13,7 @@ object RetrofitManage {
     private const val READ_TIMEOUT = 100L
     private const val WRITE_TIMEOUT = 60L
 
-        private const val BASE_URL = "http://api.apiopen.top/api/"
+        private const val BASE_URL = "https://api.apiopen.top/api/"
 //    private const val BASE_URL = "http://yyapi.study68.cn/"
 
     private fun initRetrofit(): Retrofit {
