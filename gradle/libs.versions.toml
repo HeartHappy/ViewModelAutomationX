@@ -15,7 +15,7 @@ fragmentKtxVersion = "1.5.0"
 material = "1.4.0"
 activity = "1.5.0"
 constraintlayout = "2.0.4"
-lifecycleVersion = "2.3.0"
+lifecycleVersion = "2.5.0"
 
 kspVersion = "2.0.10-1.0.24"
 kotlinpoetKsp = "1.12.0"
