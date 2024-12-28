@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.hearthappy.viewmodelautomationx.databinding.FragmentMainBinding
 import com.hearthappy.vma.api.RetrofitManage
@@ -31,7 +30,7 @@ class MainFragment : Fragment() {
     private val viewModel2 by vmaFromActivity<MainViewModel>()
 
     //implementation libs.androidx.fragment.ktx
-    private val viewModel3: MainViewModel by activityViewModels<MainViewModel>()
+    //    private val viewModel3: MainViewModel by activityViewModels<MainViewModel>()
 
 
     private lateinit var viewBinding: FragmentMainBinding
@@ -45,8 +44,11 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModelListener()
-        viewModel.getImages(1, 10)
-        Log.d(TAG, "onCreate 内存地址: 1：${System.identityHashCode(viewModel)}，2：${System.identityHashCode(viewModel2)},3：${System.identityHashCode(viewModel3)}")
+        viewModel2.getImages(1, 10)
+        viewBinding.apply {
+            Log.d(TAG, "onCreate 内存地址: 1：${System.identityHashCode(viewModel)}，2：${System.identityHashCode(viewModel2)}")
+            tvTitle.text = String.format("创建内存地址：%s\n共享内存地址:%s", System.identityHashCode(viewModel), System.identityHashCode(viewModel2))
+        }
     }
 
     private fun initViewModelListener() {
@@ -81,7 +83,7 @@ class MainFragment : Fragment() {
             } //            }
         }
 
-        viewModel.getTokenLiveData.observe(viewLifecycleOwner) {
+        viewModel.getSentencesLiveData.observe(viewLifecycleOwner) {
             it?.let {
                 when (it) {
                     is Result.Failed -> {}

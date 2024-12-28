@@ -1,5 +1,6 @@
 package com.hearthappy.vma.model.response
 
-data class BaseData<T:Any>(
-    var data: T
-)
+import com.hearthappy.annotations.storage.DataStore
+
+
+data class BaseData<T:Any>(val code:Int,val message:String,val result:T)
