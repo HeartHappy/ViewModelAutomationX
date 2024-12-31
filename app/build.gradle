@@ -75,7 +75,6 @@ dependencies {
 
     implementation project(':vma-ktx')
     implementation project(':annotations')
-//
-//    //注意：要求jdk11才能将生成文件作为资源引用
+//    //注意：要求jdk11或更高才能将生成文件作为资源引用
     ksp project(":processor")
 }

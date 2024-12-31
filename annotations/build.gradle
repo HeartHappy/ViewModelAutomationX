@@ -4,8 +4,9 @@ plugins {
     id 'maven-publish'
 //    alias(libs.plugins.jetbrains.kotlin.jvm)
 }
+def publishVersion="1.0.7"
 group("com.hearthappy")
-version("1.0.0")
+version(publishVersion)
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
@@ -16,9 +17,14 @@ publishing {
         maven(MavenPublication) {
             groupId = 'com.hearthappy'
             artifactId = 'annotations'
-            version = '1.0.0'
+            version = publishVersion
             artifact sourceJar
             from components.java
+        }
+    }
+    repositories {
+        maven {
+            url = uri("${buildDir}/repo") // 本地仓库路径
         }
     }
 }

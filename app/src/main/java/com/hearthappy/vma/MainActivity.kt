@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         viewBinding.apply {
             initListener()
             initViewModelListener()
+//            LogTools.kernel.t(TAG).d("Test onCreate()")
             Log.d(TAG, "onCreate: ${System.identityHashCode(viewModel)}")
         }
     }
