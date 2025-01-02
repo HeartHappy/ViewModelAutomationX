@@ -188,4 +188,4 @@ viewModel.getSentencesLiveData.observe(this@MainActivity) {
   @DataWrite("name") var name: String = "")
   
   ```
-#### 六、[注解简介](https://github.com/HeartHappy/ViewModelAutomationX/ANNOTATION.md)
+#### 六、[注解简介](https://github.com/HeartHappy/ViewModelAutomationX/blob/master/ANNOTATION.md)
