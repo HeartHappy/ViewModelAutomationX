@@ -1,9 +1,9 @@
 package com.hearthappy.processor.model
 
 class GenerateDataStoreData {
-    val dataStoreData = mutableListOf<DataStoreData>()
+    val data = mutableListOf<DataStoreData>()
 }
 
 class GenerateViewModelData {
-    val viewModelData = mutableListOf<ViewModelData>()
+    val data = mutableListOf<ViewModelData>()
 }

@@ -9,7 +9,6 @@ import com.hearthappy.processor.constant.Constant
 import com.hearthappy.processor.datahandler.findSpecifiedAnt
 import com.hearthappy.processor.datahandler.reConstName
 import com.hearthappy.processor.ext.DataStoreArgs
-import com.hearthappy.processor.log.printDataStore
 import com.hearthappy.processor.model.DataStoreData
 import com.hearthappy.processor.model.GenerateDataStoreData
 
@@ -37,7 +36,7 @@ class DataStoreVisitor(private val resolver: Resolver, private val logger: KSPLo
                         DataStoreArgs.AGGREGATING -> aggregating = argument.value as Boolean
                     }
                 }
-                generateData.dataStoreData.add(dataStoreData)
+                generateData.data.add(dataStoreData)
             }
             classDeclaration.getAllProperties().forEach { it.accept(this@DataStoreVisitor, Unit) }
         }
@@ -49,7 +48,7 @@ class DataStoreVisitor(private val resolver: Resolver, private val logger: KSPLo
     override fun visitPropertyDeclaration(property: KSPropertyDeclaration, data: Unit) {
         val argument = property.annotations.findSpecifiedAnt(Constant.DATA_WRITE)?.arguments?.first()
         argument?.let {
-            generateData.dataStoreData[index].apply {
+            generateData.data[index].apply {
                 val storageValue = it.value.toString() //msg
                 val storageKey = storageValue.reConstName() //MSG
                 this.storageMap[storageKey] = storageValue

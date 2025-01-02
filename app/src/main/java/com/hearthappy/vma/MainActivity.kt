@@ -6,17 +6,25 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.hearthappy.viewmodelautomationx.R
 import com.hearthappy.viewmodelautomationx.databinding.ActivityMainBinding
 import com.hearthappy.vma.api.RetrofitManage
+import com.hearthappy.vma.generate.datastore.UserDataKeys
+import com.hearthappy.vma.generate.datastore.userInfoDataStore
 import com.hearthappy.vma.generate.viewmodel.MainViewModel
+import com.hearthappy.vma.model.readMultiple
 import com.hearthappy.vma_ktx.factory.vma
 import com.hearthappy.vma_ktx.network.FlowResult
 import com.hearthappy.vma_ktx.network.Result
 import com.hearthappy.vma_ktx.network.asFailedMessage
 import com.hearthappy.vma_ktx.network.asThrowableMessage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,7 +46,6 @@ class MainActivity : AppCompatActivity() {
         viewBinding.apply {
             initListener()
             initViewModelListener()
-//            LogTools.kernel.t(TAG).d("Test onCreate()")
             Log.d(TAG, "onCreate: ${System.identityHashCode(viewModel)}")
         }
     }
@@ -54,50 +61,43 @@ class MainActivity : AppCompatActivity() {
         btnGetImages.setOnClickListener { viewModel.getImages(1, 10) }
 
 
-        // TODO: 暂且支持具体类型，不支持泛型的检测
-        //        btnGetStorageData.setOnClickListener { //获取dataStore数据
-        //            lifecycleScope.launch { //                    val token = userInfoDataStore.read(UserInfoKeys.TOKEN)
-        //                userInfoDataStore.readMultiple(UserInfoKeys.TOKEN) {
-        //                    withContext(Dispatchers.Main) {
-        //                        it.forEach { f -> showMessage("token:${f}") }
-        //                    }
-        //                }
-        //            }
-        //        }
+        btnGetStorageData.setOnClickListener { //获取dataStore数据
+            lifecycleScope.launch {
+                userInfoDataStore.readMultiple(UserDataKeys.NAME) {
+                    withContext(Dispatchers.Main) {
+                        it.forEach { f -> showMessage("name:${f}") }
+                    }
+                }
+            }
+        }
     }
 
     private fun initViewModelListener() {
         lifecycleScope.launch {
-            viewModel.loginStateFlow //                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
-                .collect {
-                    when (it) {
-                        is FlowResult.Default -> {}
-                        is FlowResult.Failed -> showMessage(it.asFailedMessage())
-
-                        is FlowResult.Loading -> showMessage(getString(R.string.loading))
-
-                        is FlowResult.Succeed<*> -> showMessage(it.body.toString())
-
-                        is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
-                    }
-                }
-        }
-
-        lifecycleScope.launch { //            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-            viewModel.sfImages.collect {
+            viewModel.loginStateFlow.flowWithLifecycle(lifecycle, Lifecycle.State.CREATED).collect {
                 when (it) {
                     is FlowResult.Default -> {}
                     is FlowResult.Failed -> showMessage(it.asFailedMessage())
-
                     is FlowResult.Loading -> showMessage(getString(R.string.loading))
-
                     is FlowResult.Succeed<*> -> showMessage(it.body.toString())
-
                     is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
                 }
-            } //            }
+            }
         }
 
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.sfImages.collect {
+                    when (it) {
+                        is FlowResult.Default -> {}
+                        is FlowResult.Failed -> showMessage(it.asFailedMessage())
+                        is FlowResult.Loading -> showMessage(getString(R.string.loading))
+                        is FlowResult.Succeed<*> -> showMessage(it.body.toString())
+                        is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
+                    }
+                }
+            }
+        }
         viewModel.getSentencesLiveData.observe(this@MainActivity) {
             it?.let {
                 when (it) {

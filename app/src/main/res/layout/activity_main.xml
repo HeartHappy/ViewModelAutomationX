@@ -38,14 +38,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="获取名句"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/btnGetStorageData" />
 
-    <!--暂且支持具体类型，不支持泛型的检测-->
-   <!-- <Button
+    <Button
         android:id="@+id/btnGetStorageData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="获取存储数据"
-        app:layout_constraintBottom_toBottomOf="parent" />-->
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

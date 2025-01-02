@@ -13,16 +13,21 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-@ViewModelAutomation("MainViewModel", true) interface ApiService {
+@ViewModelAutomation("MainViewModel")
+interface ApiService {
 
 
-    @BindStateFlow @POST("login") suspend fun login(@Body loginBody: LoginBody): ResLogin
+    @BindStateFlow
+    @POST("login")
+    suspend fun login(@Body loginBody: LoginBody): ResLogin
 
-    @BindStateFlow("getImages", "sfImages") @GET("getImages")
+    @BindStateFlow("getImages", "sfImages")
+    @GET("getImages")
     suspend fun getImage(@Query("page") page: Int, @Query("size") size: Int): ResImages
 
 
-    @BindLiveData @GET("sentences") suspend fun getSentences(): BaseData<ResSentences>
-
+    @BindLiveData
+    @GET("sentences")
+    suspend fun getSentences(): BaseData<ResSentences>
 
 }

@@ -44,8 +44,8 @@ class ViewModelVisitor(
     private val index: Int,
 ) : KSVisitorVoid() {
     override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
-        generateData.viewModelData.add(ViewModelData())
-        val viewModelData = generateData.viewModelData.get(index = index)
+        generateData.data.add(ViewModelData())
+        val viewModelData = generateData.data.get(index = index)
         viewModelData.containingFile = classDeclaration.containingFile
         classDeclaration.apply {
             val apiClassName = simpleName.asString()
@@ -60,7 +60,7 @@ class ViewModelVisitor(
 
 
     override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
-        val viewModelData = generateData.viewModelData.get(index = index)
+        val viewModelData = generateData.data.get(index = index)
         val functionName = function.simpleName.asString()
         if (DataCheck.isFunction(functionName)) {
             logger.printVma(viewModelData.enabledLog, "function name: $functionName")
