@@ -122,11 +122,11 @@ interface ApiService {
 
 #### 3、生成结果（如下图）
 
-![PixPin_2025-01-03_11-53-51.png](https://s2.loli.net/2025/01/03/EqeGo9jXaDUvzIi.png)
+<img src="https://s2.loli.net/2025/01/03/EqeGo9jXaDUvzIi.png" alt="PixPin_2025-01-03_11-53-51.png" style="zoom:25%;" />
 
 #### 4、生成目录
 
-```
+```kotlin
 app/build/generated/ksp/*
 ```
 
@@ -151,27 +151,27 @@ private val viewModel by vmaFromActivity<MainViewModel>()
 
 ##### StateFlow监听
 
-   ```
-   //StateFlow监听
-   lifecycleScope.launch {
-       lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-           viewModel.sfImages.collect {
-               when (it) {
-                   is FlowResult.Default -> {}
-                   is FlowResult.Failed -> showMessage(it.asFailedMessage())
-                   is FlowResult.Loading -> showMessage(getString(R.string.loading))
-                   is FlowResult.Succeed<*> -> showMessage(it.body.toString())
-                   is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
-               }
-           }
+```kotlin
+//StateFlow监听
+lifecycleScope.launch {
+lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+   viewModel.sfImages.collect {
+       when (it) {
+	   is FlowResult.Default -> {}
+	   is FlowResult.Failed -> showMessage(it.asFailedMessage())
+	   is FlowResult.Loading -> showMessage(getString(R.string.loading))
+	   is FlowResult.Succeed<*> -> showMessage(it.body.toString())
+	   is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
        }
    }
-   ```
+}
+}
+```
 
    
 ##### LiveData监听
 
-```
+```kotlin
 //LiveData监听
 viewModel.getSentencesLiveData.observe(this@MainActivity) {
     it?.let {
@@ -190,7 +190,7 @@ viewModel.getSentencesLiveData.observe(this@MainActivity) {
 
 #### 你只需要在响应类中添加@DataStore和@DataWrite("from")注解，即可实现响应数据的自动存储（示例代码如下）
 
-```
+```kotlin
 @DataStore("filename")
 data class ResSentences(
 @DataWrite("from") 
@@ -202,7 +202,7 @@ var name: String = "")
 
 #### 注意：数据存储采用的DataStore，如果你需要使用DataStore响应存储。你需要在你的项目集成build.gradle(app)
 
-```
+```groovy
 implementation 'androidx.datastore:datastore-preferences:1.0.0'
 implementation 'androidx.datastore:datastore-preferences-core:1.0.0'
 ```
