@@ -15,10 +15,13 @@
 #### 4、欢迎使用issues提建议或bug
 
  
+### 二、示例演示
+
+<img src="https://github.com/HeartHappy/ViewModelAutomationX/blob/master/demo.gif" alt="示例演示" height="700px">
 
 
 
-### 二、集成
+### 三、集成
 
 #### 1、如果你的项目 Gradle 配置是在 `7.0 以下`，需要在 `build.gradle` 文件中加入
 
@@ -70,7 +73,7 @@ dependencies {
 }
 ```
 
-### 三、注解使用
+### 四、注解使用
 
 #### 你只需要在你的Retrofit 的API接口中添加注解@ViewModelAutomation注解和@BindLiveData或@BindStateFlow（示例代码如下）
 
@@ -93,7 +96,7 @@ interface ApiService {
 }
 ```
 
-### 四、生成ViewModel文件
+### 五、生成ViewModel文件
 
 #### 1、生成方式
 
@@ -136,7 +139,7 @@ app/build/generated/ksp/*
 
 
 
-### 五：使用
+### 六：使用
 
 #### 1、在你的Activity或Fragment中创建ViewModel
 
@@ -190,7 +193,7 @@ viewModel.getSentencesLiveData.observe(this@MainActivity) {
 
 
 
-### 六、响应数据存储（可选）
+### 七、响应数据存储（可选）
 
 #### 你只需要在响应类中添加@DataStore和@DataWrite("from")注解，即可实现响应数据的自动存储（示例代码如下）
 
@@ -210,7 +213,7 @@ var name: String = "")
 implementation 'androidx.datastore:datastore-preferences:1.0.0'
 implementation 'androidx.datastore:datastore-preferences-core:1.0.0'
 ```
-### 七：代码混淆
+### 八：代码混淆
 
 ```
 -keep public class * extends androidx.lifecycle.AndroidViewModel
@@ -223,4 +226,4 @@ implementation 'androidx.datastore:datastore-preferences-core:1.0.0'
 }
 ```
 
-### 八、[注解简介](https://github.com/HeartHappy/ViewModelAutomationX/blob/master/ANNOTATION.md)
+### 九、[注解简介](https://github.com/HeartHappy/ViewModelAutomationX/blob/master/ANNOTATION.md)
