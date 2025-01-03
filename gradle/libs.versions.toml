@@ -25,7 +25,7 @@ adapterVesion = "2.3.0"
 okhttp3Version = "4.9.2"
 
 dataStoreVersion = "1.0.0"
-vmaVersion="1.0.7"
+vmaVersion="1.0.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

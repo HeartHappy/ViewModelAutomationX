@@ -6,8 +6,9 @@ plugins {
 //    alias(libs.plugins.jetbrains.kotlin.jvm)
 //    alias(libs.plugins.devtools.ksp)
 }
+def publishVersion=rootProject.ext.publishVersion
 group("com.hearthappy")
-version(rootProject.ext.publishVersion)
+version(publishVersion)
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
@@ -19,7 +20,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'com.hearthappy'
             artifactId = 'processor'
-            version = rootProject.ext.publishVersion
+            version = publishVersion
             artifact sourceJar
             from components.java
         }

@@ -4,8 +4,9 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 //    alias(libs.plugins.kotlin.android)
 }
+def publishVersion=rootProject.ext.publishVersion
 group("com.hearthappy")
-version(rootProject.ext.publishVersion)
+version(publishVersion)
 // Notice: 2022/1/11 Android依赖发布函数库
 
 task javadoc(type: Javadoc) {
@@ -31,7 +32,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.hearthappy'
                 artifactId = 'vma-ktx'
-                version = rootProject.ext.publishVersion
+                version = publishVersion
                 artifacts {
                     archives(javadocJar)
                     archives(sourceJar)
