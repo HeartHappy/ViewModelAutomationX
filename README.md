@@ -97,7 +97,7 @@ interface ApiService {
 
 #### 1、生成方式
 
-- ###### （推荐）使用命令生成：
+- ##### （推荐）使用命令生成：
 
 ```groovy
 ./gradlew kspDebugKotlin   
@@ -112,7 +112,7 @@ interface ApiService {
 
 
 
-- ###### Android Studio——>Build——>Make Project
+- ##### Android Studio——>Build——>Make Project
 
 #### 2、生成日志
 
@@ -215,4 +215,4 @@ implementation 'androidx.datastore:datastore-preferences-core:1.0.0'
 }
 ```
 
-### 八、注解简介
+### 八、[注解简介](https://github.com/HeartHappy/ViewModelAutomationX/blob/master/ANNOTATION.md)
