@@ -122,7 +122,11 @@ interface ApiService {
 
 #### 3、生成结果（如下图）
 
-<img src="https://s2.loli.net/2025/01/03/EqeGo9jXaDUvzIi.png" alt="生成结果" width="400px" />
+<a href="https://s2.loli.net/2025/01/03/EqeGo9jXaDUvzIi.png" target="_blank">
+    <img src="https://s2.loli.net/2025/01/03/EqeGo9jXaDUvzIi.png" alt="生成结果" width="400px" />
+</a>
+
+
 
 #### 4、生成目录
 
