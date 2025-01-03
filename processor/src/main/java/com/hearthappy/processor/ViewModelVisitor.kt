@@ -14,8 +14,9 @@ import com.hearthappy.processor.datahandler.DataCheck
 import com.hearthappy.processor.datahandler.DataCheck.getGenericType
 import com.hearthappy.processor.datahandler.DataCheck.hasGeneric
 import com.hearthappy.processor.datahandler.DataCheck.isBasicDataTypes
-import com.hearthappy.processor.datahandler.bindSuffix
 import com.hearthappy.processor.datahandler.className2PropertyName
+import com.hearthappy.processor.datahandler.convertFirstChar
+import com.hearthappy.processor.datahandler.convertToPrefix
 import com.hearthappy.processor.datahandler.findArgsValue
 import com.hearthappy.processor.datahandler.findSpecifiedAnt
 import com.hearthappy.processor.datahandler.reConstName
@@ -118,7 +119,7 @@ class ViewModelVisitor(
 
                     BindFunctionArgs.PROPERTY_NAME -> {
                         val propertyName = argument.value as String
-                        functionData.propertyAliasName = propertyName.isNotEmpty().takeIf { tif -> tif }?.run { propertyName } ?: run { functionName.plus(it.shortName.asString().bindSuffix()) }
+                        functionData.propertyAliasName = propertyName.isNotEmpty().takeIf { tif -> tif }?.run { propertyName } ?: run { it.shortName.asString().convertToPrefix().plus(functionName.convertFirstChar()) }
                     }
                 }
             }

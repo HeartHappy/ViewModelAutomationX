@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace 'com.hearthappy.viewmodelautomationx'
-    compileSdk 31
+    compileSdk  rootProject.ext.compileSdk
 
     defaultConfig {
-        minSdk 21
-        versionCode 1
-        versionName "1.0"
+        minSdk rootProject.ext.minSdk
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -26,11 +26,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility rootProject.ext.javaVersion
+        targetCompatibility rootProject.ext.javaVersion
     }
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = rootProject.ext.kotlinJvmTarget
     }
 
     buildFeatures {
@@ -69,12 +69,12 @@ dependencies {
     implementation libs.datastore.preferences
     implementation libs.datastore.preferences.core
 
-    implementation 'com.github.HeartHappy.ViewModelAutomationX:annotations:1.0.7'
-    implementation 'com.github.HeartHappy.ViewModelAutomationX:vma-ktx:1.0.7'
-    ksp 'com.github.HeartHappy.ViewModelAutomationX:processor:1.0.7'
+//    implementation libs.github.vma.annotations
+//    implementation libs.github.vma.ktx
+//    ksp libs.github.vma.processor
 
-//    implementation project(':vma-ktx')
-//    implementation project(':annotations')
-////    //注意：要求jdk11或更高才能将生成文件作为资源引用
-//    ksp project(":processor")
+    implementation project(':vma-ktx')
+    implementation project(':annotations')
+//    //注意：要求jdk11或更高才能将生成文件作为资源引用
+    ksp project(":processor")
 }

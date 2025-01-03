@@ -4,9 +4,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 //    alias(libs.plugins.kotlin.android)
 }
-def publishVersion="1.0.7"
 group("com.hearthappy")
-version(publishVersion)
+version(rootProject.ext.publishVersion)
 // Notice: 2022/1/11 Android依赖发布函数库
 
 task javadoc(type: Javadoc) {
@@ -32,7 +31,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.hearthappy'
                 artifactId = 'vma-ktx'
-                version = publishVersion
+                version = rootProject.ext.publishVersion
                 artifacts {
                     archives(javadocJar)
                     archives(sourceJar)
@@ -49,10 +48,10 @@ afterEvaluate {
 
 android {
     namespace 'com.hearthappy.vma_ktx'
-    compileSdk 31
+    compileSdk rootProject.ext.compileSdk
 
     defaultConfig {
-        minSdk 21
+        minSdk rootProject.ext.minSdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -65,11 +64,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility rootProject.ext.javaVersion
+        targetCompatibility rootProject.ext.javaVersion
     }
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = rootProject.ext.kotlinJvmTarget
     }
 }
 

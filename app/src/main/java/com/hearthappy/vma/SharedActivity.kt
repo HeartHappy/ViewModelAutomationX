@@ -36,7 +36,7 @@ class SharedActivity : AppCompatActivity() {
         }
         viewBinding.initView()
 
-        viewModel.getSentencesLiveData.observe(this@SharedActivity) {
+        viewModel.ldGetSentences.observe(this@SharedActivity) {
             it?.let {
                 when (it) {
                     is Result.Failed -> {}

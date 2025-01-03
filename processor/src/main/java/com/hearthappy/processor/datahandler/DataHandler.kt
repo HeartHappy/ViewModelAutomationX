@@ -19,6 +19,26 @@ fun Sequence<KSAnnotation>.findSpecifiedAnt(vararg annotationNames: String) = th
 
 fun String.bindSuffix() = this.removePrefix("Bind")
 
+/**
+ * 转换首字母为大写
+ * @receiver String
+ * @return String
+ */
+fun String.convertFirstChar(): String = this.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+
+/**
+ * 将注解类型转换成属性前缀
+ * @receiver String BindLiveData\BindStateFlow
+ * @return String ld\sf
+ */
+fun String.convertToPrefix(): String {
+    return when (this) {
+        "BindLiveData" -> "ld"
+        "BindStateFlow" -> "sf"
+        else -> throw IllegalArgumentException("Unknown binding annotation type: $this")
+    }
+}
+
 fun String.privatePropertyName() = "_${this}"
 
 fun String.className2PropertyName() = this.replaceFirstChar { it.lowercaseChar() }

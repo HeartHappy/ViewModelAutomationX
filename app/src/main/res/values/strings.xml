@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">ViewModelAutomation</string>
     <string name="loading">加载中...</string>
+    <string name="welcome_to_viewmodelautomationx">Welcome to ViewModelAutomationX</string>
 </resources>

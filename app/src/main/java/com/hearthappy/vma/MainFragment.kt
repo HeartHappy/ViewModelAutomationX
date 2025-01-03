@@ -47,13 +47,13 @@ class MainFragment : Fragment() {
         viewModel2.getImages(1, 10)
         viewBinding.apply {
             Log.d(TAG, "onCreate 内存地址: 1：${System.identityHashCode(viewModel)}，2：${System.identityHashCode(viewModel2)}")
-            tvTitle.text = String.format("创建内存地址：%s\n共享内存地址:%s", System.identityHashCode(viewModel), System.identityHashCode(viewModel2))
+            tvResult.text = String.format("创建内存地址:%s\n共享内存地址:%s", System.identityHashCode(viewModel), System.identityHashCode(viewModel2))
         }
     }
 
     private fun initViewModelListener() {
         lifecycleScope.launch {
-            viewModel.loginStateFlow //                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+            viewModel.sfLogin //                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
                 .collect {
                     when (it) {
                         is FlowResult.Default -> {}
@@ -83,7 +83,7 @@ class MainFragment : Fragment() {
             } //            }
         }
 
-        viewModel.getSentencesLiveData.observe(viewLifecycleOwner) {
+        viewModel.ldGetSentences.observe(viewLifecycleOwner) {
             it?.let {
                 when (it) {
                     is Result.Failed -> {}

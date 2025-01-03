@@ -6,10 +6,8 @@ plugins {
 //    alias(libs.plugins.jetbrains.kotlin.jvm)
 //    alias(libs.plugins.devtools.ksp)
 }
-def publishVersion="1.0.7"
 group("com.hearthappy")
-
-version(publishVersion)
+version(rootProject.ext.publishVersion)
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
@@ -21,7 +19,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'com.hearthappy'
             artifactId = 'processor'
-            version = publishVersion
+            version = rootProject.ext.publishVersion
             artifact sourceJar
             from components.java
         }
@@ -34,8 +32,8 @@ publishing {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = rootProject.ext.javaVersion
+    targetCompatibility = rootProject.ext.javaVersion
 }
 
 dependencies {
@@ -46,7 +44,6 @@ dependencies {
     implementation project(':annotations')
 }
 
-
 compileKotlin {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = rootProject.ext.kotlinJvmTarget
 }

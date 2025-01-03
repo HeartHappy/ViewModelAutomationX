@@ -3,7 +3,7 @@ package com.hearthappy.vma.model.response
 import com.hearthappy.annotations.storage.DataStore
 import com.hearthappy.annotations.storage.DataWrite
 
-@DataStore("user_info",true)
+@DataStore("user_info")
 data class ResLogin(
     val code: Int,
     @DataWrite("msg")

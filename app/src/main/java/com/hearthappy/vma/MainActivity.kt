@@ -14,7 +14,7 @@ import com.hearthappy.viewmodelautomationx.R
 import com.hearthappy.viewmodelautomationx.databinding.ActivityMainBinding
 import com.hearthappy.vma.api.RetrofitManage
 import com.hearthappy.vma.generate.datastore.UserDataKeys
-import com.hearthappy.vma.generate.datastore.userInfoDataStore
+import com.hearthappy.vma.generate.datastore.userDataDataStore
 import com.hearthappy.vma.generate.viewmodel.MainViewModel
 import com.hearthappy.vma.model.readMultiple
 import com.hearthappy.vma_ktx.factory.vma
@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
         btnGetStorageData.setOnClickListener { //获取dataStore数据
             lifecycleScope.launch {
-                userInfoDataStore.readMultiple(UserDataKeys.NAME) {
+                userDataDataStore.readMultiple(UserDataKeys.NAME) {
                     withContext(Dispatchers.Main) {
                         it.forEach { f -> showMessage("name:${f}") }
                     }
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initViewModelListener() {
         lifecycleScope.launch {
-            viewModel.loginStateFlow.flowWithLifecycle(lifecycle, Lifecycle.State.CREATED).collect {
+            viewModel.sfLogin.flowWithLifecycle(lifecycle, Lifecycle.State.CREATED).collect {
                 when (it) {
                     is FlowResult.Default -> {}
                     is FlowResult.Failed -> showMessage(it.asFailedMessage())
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        viewModel.getSentencesLiveData.observe(this@MainActivity) {
+        viewModel.ldGetSentences.observe(this@MainActivity) {
             it?.let {
                 when (it) {
                     is Result.Failed -> showMessage(it.asFailedMessage())

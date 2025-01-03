@@ -29,6 +29,23 @@
 -keep public class * extends android.app.backup.BackupAgentHelper
 -keep public class * extends android.preference.Preference
 -keep public class * extends android.view.View
+
+# ViewModelAutomationX
+-keep public class * extends androidx.lifecycle.AndroidViewModel
+-keep class com.hearthappy.vma_ktx.factory.** { *; }
+-keep class com.hearthappy.vma_ktx.network.** { *; }
+-keep class com.hearthappy.vma.model.response.** {*;}
+# 如果工厂方法使用了泛型，请确保签名属性也被保留
+-keepattributes Signature
+
+# 如果使用了注解处理器生成代码，确保注解信息不丢失
+#-keepattributes *Annotation*
+
+# 如果使用了反射，请确保反射调用的目标类和方法不被混淆
+-keepclassmembers class * {
+    @org.jetbrains.annotations.NotNull <methods>;
+}
+
 # 保留support下的所有类及其内部类
 -keep class android.support.** {*;}
 -keep interface android.support.** {*;}
