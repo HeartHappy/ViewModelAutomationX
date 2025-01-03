@@ -2,7 +2,7 @@
 
 ### 一、项目地址：[Github](https://github.com/HeartHappy/ViewModelAutomationX)
 
-#### 1、框架初衷：项目中存在大量接口，反复的接口调用以及ViewModel层的数据绑定。写多了，感觉这些代码也是冗余代码。于是产生了生成ViewModel层以及网络请求的想法。
+#### 1、框架初衷：项目中存在大量接口，反复的接口调用以及ViewModel层的数据绑定。写多了，感觉这些是过于频繁的重复代码。于是产生了生成ViewModel层以及网络请求的想法。
 
 #### 2、框架优势：通过提供的注解自动生成ViewModel层的LiveData、StateFlow，以及网络请求。节省您大量的开发时间和编译时间
 
