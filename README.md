@@ -120,7 +120,11 @@ interface ApiService {
 
 ![_20250102160141.png](https://s2.loli.net/2025/01/02/CctTHf6IEdpoM8B.png)
 
-#### 3、生成目录
+#### 3、生成结果（如下图）
+
+![PixPin_2025-01-03_11-53-51.png](https://s2.loli.net/2025/01/03/EqeGo9jXaDUvzIi.png)
+
+#### 4、生成目录
 
 ```
 app/build/generated/ksp/*
