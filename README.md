@@ -1,5 +1,7 @@
 # 自动生成ViewModel层+Retrofit网络请求+DataStore存储
 
+[![](https://jitpack.io/v/HeartHappy/ViewModelAutomationX.svg)](https://jitpack.io/#HeartHappy/ViewModelAutomationX)
+
 ### 一、项目地址：[Github](https://github.com/HeartHappy/ViewModelAutomationX)
 
 #### 1、框架初衷：项目中存在大量接口，反复的接口调用以及ViewModel层的数据绑定。写多了，感觉这些是过于频繁的重复代码。于是产生了生成ViewModel层以及网络请求的想法。
