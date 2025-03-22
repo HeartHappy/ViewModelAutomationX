@@ -17,6 +17,11 @@ android {
         versionName rootProject.ext.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
@@ -59,23 +64,18 @@ dependencies {
     implementation libs.squareup.converter.gson
     implementation libs.squareup.adapter.rxjava2
     implementation libs.squareup.okhttp3
-//    def room_version = "2.5.0"
-//    implementation "androidx.room:room-compiler:$room_version"
-//    implementation "androidx.room:room-compiler-processing:$room_version"
-//    implementation "androidx.room:room-runtime:$room_version"
-//    annotationProcessor "androidx.room:room-compiler:$room_version"
 
 
     implementation libs.datastore.preferences
     implementation libs.datastore.preferences.core
 
     //远程库
-//    implementation libs.github.vma.annotations
-//    implementation libs.github.vma.ktx
-//    ksp libs.github.vma.processor
+    implementation libs.github.vma.annotations
+    implementation libs.github.vma.ktx
+    ksp libs.github.vma.processor
 
-    implementation project(':vma-ktx')
-    implementation project(':annotations')
+//    implementation project(':vma-ktx')
+//    implementation project(':annotations')
     //注意：要求jdk11或更高才能将生成文件作为资源引用
-    ksp project(":processor")
+//    ksp project(":processor")
 }

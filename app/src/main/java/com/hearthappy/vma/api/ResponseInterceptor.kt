@@ -1,4 +1,4 @@
-package com.hearthappy.ksp.api
+package com.hearthappy.vma.api
 
 import android.util.Log
 import okhttp3.Interceptor
