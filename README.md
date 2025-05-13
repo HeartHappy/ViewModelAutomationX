@@ -67,11 +67,11 @@ plugins {
 
 dependencies {
 	//注解库
-    implementation 'com.github.HeartHappy.ViewModelAutomationX:annotations:1.0.7'
+    implementation 'com.github.HeartHappy.ViewModelAutomationX:annotations:1.0.8'
     //扩展库
-    implementation 'com.github.HeartHappy.ViewModelAutomationX:vma-ktx:1.0.7'
+    implementation 'com.github.HeartHappy.ViewModelAutomationX:vma-ktx:1.0.8'
     //处理注解自动生成库
-    ksp 'com.github.HeartHappy.ViewModelAutomationX:processor:1.0.7'
+    ksp 'com.github.HeartHappy.ViewModelAutomationX:processor:1.0.8'
 }
 ```
 
