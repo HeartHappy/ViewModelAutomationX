@@ -1,5 +1,10 @@
 package com.hearthappy.processor.ext
 
+/**
+ * Created Date: 2025/5/13
+ * @author ChenRui
+ * ClassDescription：解析注解参数
+ */
 object ViewModelAutomationArgs {
     const val FILENAME = "fileName"
     const val ENABLED_LOG = "enableLog"

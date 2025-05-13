@@ -13,8 +13,11 @@ import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.ksp.writeTo
 
+/**
+ * @author ChenRui
+ * ClassDescription： 具体生成Spec
+ */
 class GenerateSpec {
 
     /**
@@ -25,7 +28,7 @@ class GenerateSpec {
      * @param superClassName ClassName? 继承父类ClassName
      * @return TypeSpec.Builder
      */
-    fun generateClass(className: String, constructorParameters: List<ParameterSpec> = listOf(), superClassName: ClassName? = null,isAddConstructorProperty: Boolean = true): TypeSpec.Builder {
+    fun generateClass(className: String, constructorParameters: List<ParameterSpec> = listOf(), superClassName: ClassName? = null, isAddConstructorProperty: Boolean = true): TypeSpec.Builder {
         return TypeSpec.classBuilder(className).apply {
             if (constructorParameters.isNotEmpty()) { //创建构造参数
                 primaryConstructor(FunSpec.constructorBuilder().addParameters(constructorParameters).build())
@@ -74,10 +77,9 @@ class GenerateSpec {
         val fileSpec = FileSpec.builder(Constant.GENERATE_VIEWMODEL_PKG, vma.className).apply {
             vma.imports.forEach { addImport(it.packageName, it.simpleName) }
         }.addType(generateClass.build()).build()
-        codeGenerator.createNewFile(Dependencies(vma.aggregating, vma.containingFile!!),Constant.GENERATE_VIEWMODEL_PKG,vma.className).bufferedWriter().use { fileSpec.writeTo(it) }
-//        FileSpec.builder(Constant.GENERATE_VIEWMODEL_PKG, vma.className).apply {
-//            vma.imports.forEach { addImport(it.packageName, it.simpleName) }
-//        }.addType(generateClass.build()).build().writeTo(codeGenerator, Dependencies(vma.aggregating, vma.containingFile!!))
+        codeGenerator.createNewFile(Dependencies(vma.aggregating, vma.containingFile!!), Constant.GENERATE_VIEWMODEL_PKG, vma.className).bufferedWriter().use { fileSpec.writeTo(it) } //        FileSpec.builder(Constant.GENERATE_VIEWMODEL_PKG, vma.className).apply {
+        //            vma.imports.forEach { addImport(it.packageName, it.simpleName) }
+        //        }.addType(generateClass.build()).build().writeTo(codeGenerator, Dependencies(vma.aggregating, vma.containingFile!!))
     }
 }
 

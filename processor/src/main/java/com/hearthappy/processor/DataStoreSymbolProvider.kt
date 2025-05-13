@@ -24,7 +24,10 @@ import com.hearthappy.processor.log.printDataStore
 import com.hearthappy.processor.model.GenerateDataStoreData
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.KModifier
-
+/**
+ * @author ChenRui
+ * ClassDescription： DataStore Symbol Processing
+ */
 class DataStoreSymbolProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
         return DataStoreSymbolProcessor(environment.logger, environment.codeGenerator, PoetFactory())

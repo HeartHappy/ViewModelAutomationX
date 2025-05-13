@@ -12,13 +12,13 @@ import com.hearthappy.processor.ext.DataStoreArgs
 import com.hearthappy.processor.model.DataStoreData
 import com.hearthappy.processor.model.GenerateDataStoreData
 
-
 /**
- * 解析DataStore和Write，用于生成DataStoreExt和PreferencesKeys文件
+ * @author ChenRui
+ * ClassDescription： 解析DataStore和Write，用于生成DataStoreExt和PreferencesKeys文件
+ *
  * @property resolver Resolver
  * @property logger KSPLogger
  * @property generateData GenerateDataStoreData
- * @property storageList MutableMap<String, String>
  * @constructor
  */
 class DataStoreVisitor(private val resolver: Resolver, private val logger: KSPLogger, private val generateData: GenerateDataStoreData, private val index: Int) : KSVisitorVoid() {

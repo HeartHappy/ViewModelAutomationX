@@ -20,7 +20,10 @@ import com.hearthappy.processor.log.printParsing
 import com.hearthappy.processor.log.printStart
 import com.hearthappy.processor.model.GenerateViewModelData
 import kotlin.system.measureTimeMillis
-
+/**
+ * @author ChenRui
+ * ClassDescription： ViewModel Symbol Processing
+ */
 class ViewModelSymbolProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
         return ViewModelSymbolProcessor(

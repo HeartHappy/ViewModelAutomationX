@@ -3,35 +3,105 @@ plugins {
     id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm'
     id 'com.google.devtools.ksp'
+    id 'signing'
 //    alias(libs.plugins.jetbrains.kotlin.jvm)
 //    alias(libs.plugins.devtools.ksp)
 }
-def publishVersion=rootProject.ext.publishVersion
-group("com.hearthappy")
-version(publishVersion)
+def publishVersion = rootProject.ext.publishVersion
+//tasks.register('processor-javadoc', Javadoc) {
+//    source = sourceSets.main.java.sourceFiles
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//}
+//
+//tasks.register('javadocJar', Jar) {
+//    dependsOn javadoc
+//    archiveClassifier.set("javadoc")
+//    from javadoc.destinationDir
+//}
+// 生成 Javadoc JAR
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
+    archiveClassifier.set("javadoc")
+    from javadoc.destinationDir
+}
 
-task sourceJar(type: Jar) {
+// 生成源代码 JAR
+tasks.register('sourceJar', Jar) {
     from sourceSets.main.allJava
     archiveClassifier.set("sources")
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'com.hearthappy'
-            artifactId = 'processor'
-            version = publishVersion
-            artifact sourceJar
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url = uri("${buildDir}/repo") // 本地仓库路径
-        }
+// 配置 Javadoc 任务（解决编码、依赖问题）
+tasks.named('javadoc') {
+    source = sourceSets.main.allJava
+    classpath += configurations.compileClasspath
+    options {
+        encoding 'UTF-8'
+        links 'https://docs.oracle.com/javase/8/docs/api/'
+        links 'https://kotlinlang.org/api/latest/jvm/stdlib/'
     }
 }
+tasks.register('zipRepo', Zip) {
+    from "$buildDir/repo"
+    archiveFileName = 'io.zip' //
+    destinationDirectory = file(buildDir)
+}
+afterEvaluate {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = 'io.github.hearthappy'
+                artifactId = 'vma-processor'
+                version = publishVersion
+                artifact javadocJar
+                artifact sourceJar
+                from components.java
+                pom {
+                    name = 'vma-processor'
+                    description = 'ViewModelAutomation compile-time symbol processing library'
+                    url = 'https://github.com/HeartHappy/ViewModelAutomationX'
 
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'HeartHappy'
+                            name = 'এ᭄白ຼ龙້໌ᮨꦿ'
+                            email = '1096885636@qq.com'
+                        }
+                    }
+
+                    scm {
+                        connection = 'scm:git://github.com/HeartHappy/ViewModelAutomationX'
+                        developerConnection = 'scm:git:ssh://github.com/HeartHappy/ViewModelAutomationX'
+                        url = 'https://github.com/HeartHappy/ViewModelAutomationX'
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                url = uri("${buildDir}/repo") // 本地仓库路径
+            }
+        }
+
+    }
+    signing {
+        //gpg签名认证
+        sign(publishing.publications.maven)
+    }
+// 设置 zipRepo 任务依赖于发布任务
+    tasks.named('zipRepo') { dependsOn 'publishMavenPublicationToMavenRepository' }
+
+    tasks.named('publishMavenPublicationToMavenRepository') {
+        finalizedBy tasks.named('zipRepo')
+    }
+}
 java {
     sourceCompatibility = rootProject.ext.javaVersion
     targetCompatibility = rootProject.ext.javaVersion

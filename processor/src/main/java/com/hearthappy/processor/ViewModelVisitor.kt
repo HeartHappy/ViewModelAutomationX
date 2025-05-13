@@ -38,6 +38,10 @@ import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
+/**
+ * @author ChenRui
+ * ClassDescription： 解析ViewModel相关数据
+ */
 class ViewModelVisitor(
     private val resolver: Resolver,
     private val logger: KSPLogger,
