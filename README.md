@@ -63,7 +63,16 @@
 plugins {
     id 'com.google.devtools.ksp'
 }
-
+android{
+    //JAVA和jvm设置为11或更高
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+}
 
 dependencies {
 	//注解库
