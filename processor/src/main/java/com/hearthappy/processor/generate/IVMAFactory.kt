@@ -4,7 +4,10 @@ import com.google.devtools.ksp.processing.CodeGenerator
 import com.hearthappy.processor.model.ViewModelData
 import com.squareup.kotlinpoet.TypeSpec
 
-
+/**
+ * @author ChenRui
+ * ClassDescription：VMA工厂
+ */
 interface IVMAFactory {
 
     fun generateViewModel(vma: ViewModelData): TypeSpec.Builder

@@ -1,4 +1,4 @@
-package com.hearthappy.ksp.api
+package com.hearthappy.vma.api
 
 import android.util.Log
 import okhttp3.Interceptor
@@ -9,7 +9,6 @@ class ResponseInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request: Request = chain.request()
         val response: Response = chain.proceed(request)
-        response.body?.contentType()
 //        Log.d(TAG, "intercept: code:${response.code},result: ${response.body}")
         when (response.code) {
             200         -> {

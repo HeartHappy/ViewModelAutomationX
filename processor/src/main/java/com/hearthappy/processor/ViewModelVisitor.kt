@@ -11,9 +11,12 @@ import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.hearthappy.processor.constant.Constant
 import com.hearthappy.processor.constant.Constant.APP
 import com.hearthappy.processor.datahandler.DataCheck
+import com.hearthappy.processor.datahandler.DataCheck.getGenericType
+import com.hearthappy.processor.datahandler.DataCheck.hasGeneric
 import com.hearthappy.processor.datahandler.DataCheck.isBasicDataTypes
-import com.hearthappy.processor.datahandler.bindSuffix
 import com.hearthappy.processor.datahandler.className2PropertyName
+import com.hearthappy.processor.datahandler.convertFirstChar
+import com.hearthappy.processor.datahandler.convertToPrefix
 import com.hearthappy.processor.datahandler.findArgsValue
 import com.hearthappy.processor.datahandler.findSpecifiedAnt
 import com.hearthappy.processor.datahandler.reConstName
@@ -22,6 +25,7 @@ import com.hearthappy.processor.ext.AndroidTypeNames
 import com.hearthappy.processor.ext.BindFunctionArgs
 import com.hearthappy.processor.ext.DataStoreArgs
 import com.hearthappy.processor.ext.ViewModelAutomationArgs
+import com.hearthappy.processor.ext.getGenericProperty
 import com.hearthappy.processor.log.TAG_VMA
 import com.hearthappy.processor.log.printVma
 import com.hearthappy.processor.model.FunctionData
@@ -34,6 +38,10 @@ import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
+/**
+ * @author ChenRui
+ * ClassDescription： 解析ViewModel相关数据
+ */
 class ViewModelVisitor(
     private val resolver: Resolver,
     private val logger: KSPLogger,
@@ -41,8 +49,8 @@ class ViewModelVisitor(
     private val index: Int,
 ) : KSVisitorVoid() {
     override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
-        generateData.viewModelData.add(ViewModelData())
-        val viewModelData = generateData.viewModelData.get(index = index)
+        generateData.data.add(ViewModelData())
+        val viewModelData = generateData.data.get(index = index)
         viewModelData.containingFile = classDeclaration.containingFile
         classDeclaration.apply {
             val apiClassName = simpleName.asString()
@@ -57,7 +65,7 @@ class ViewModelVisitor(
 
 
     override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
-        val viewModelData = generateData.viewModelData.get(index = index)
+        val viewModelData = generateData.data.get(index = index)
         val functionName = function.simpleName.asString()
         if (DataCheck.isFunction(functionName)) {
             logger.printVma(viewModelData.enabledLog, "function name: $functionName")
@@ -104,8 +112,7 @@ class ViewModelVisitor(
      * @param functionName String
      * @param viewModelData ViewModelData
      */
-    private fun parsingFunAnnotation(function: KSFunctionDeclaration, functionData: FunctionData, functionName: String, viewModelData: ViewModelData) {
-        //查找BindLiveData和BindStateFlow注解
+    private fun parsingFunAnnotation(function: KSFunctionDeclaration, functionData: FunctionData, functionName: String, viewModelData: ViewModelData) { //查找BindLiveData和BindStateFlow注解
         function.annotations.findSpecifiedAnt(Constant.BIND_LIVE_DATA, Constant.BIND_STATE_FLOW)?.let {
             for (argument in it.arguments) {
                 when (argument.name?.asString()) {
@@ -116,7 +123,7 @@ class ViewModelVisitor(
 
                     BindFunctionArgs.PROPERTY_NAME -> {
                         val propertyName = argument.value as String
-                        functionData.propertyAliasName = propertyName.isNotEmpty().takeIf { tif -> tif }?.run { propertyName } ?: run { functionName.plus(it.shortName.asString().bindSuffix()) }
+                        functionData.propertyAliasName = propertyName.isNotEmpty().takeIf { tif -> tif }?.run { propertyName } ?: run { it.shortName.asString().convertToPrefix().plus(functionName.convertFirstChar()) }
                     }
                 }
             }
@@ -134,17 +141,24 @@ class ViewModelVisitor(
      */
     private fun parsingFunReturnType(function: KSFunctionDeclaration, functionData: FunctionData, viewModelData: ViewModelData) {
         function.returnType?.resolve()?.apply {
+
             //KSType.toTypeName()扩展函数直接可获取复杂返回类型
             functionData.returnType = toTypeName()
             logger.printVma(viewModelData.enabledLog, "function returnType--->${functionData.returnType}")
+            var typeName = toTypeName().toString()
+            var parent: String? = null
+            if (typeName.hasGeneric()) {
+                val genericProperty = declaration.getGenericProperty()
+                parent = genericProperty?.simpleName?.asString()
+                typeName = typeName.getGenericType()
+            }
 
-            val classDeclarationByName = resolver.getClassDeclarationByName(toTypeName().toString())
+            val classDeclarationByName = resolver.getClassDeclarationByName(typeName)
             classDeclarationByName?.let {
                 val storageList = StorageList()
                 val findArgsValue = it.annotations.findSpecifiedAnt(Constant.DATASTORE)?.arguments?.findArgsValue<String>(DataStoreArgs.NAME)
-                storageList.name = findArgsValue
-                //递归查找DataWrite注解
-                findDataWrite(it, functionData, storageList, null, null, viewModelData.enabledLog)
+                storageList.name = findArgsValue //递归查找DataWrite注解
+                findDataWrite(it, functionData, storageList, parent, null, viewModelData.enabledLog)
             }
         }
     }
@@ -152,24 +166,18 @@ class ViewModelVisitor(
     private fun findDataWrite(ksClassDeclaration: KSClassDeclaration, functionData: FunctionData, storageList: StorageList, parent: String?, parentTypeName: TypeName?, enabledLog: Boolean) {
         ksClassDeclaration.getAllProperties().forEach { property ->
             val propertyName = property.simpleName.asString()
-            val typeName = property.type.toTypeName()
-            //如果该属性包含注解，解析并存储
-            val argument = property.annotations.findSpecifiedAnt(Constant.DATA_WRITE)?.arguments?.first()
-            //存储调用值
+            val typeName = property.type.toTypeName() //如果该属性包含注解，解析并存储
+            val argument = property.annotations.findSpecifiedAnt(Constant.DATA_WRITE)?.arguments?.first() //存储调用值
             val storageValue = getStorageValue(parentTypeName, parent, propertyName)
-            argument?.let {
-//                logger.printVma(true, "parentTypeName:${parentTypeName},typeName:${typeName},parent:${parent},propertyName:${propertyName}")
-                storageDataVerification(parentTypeName, property)
-                //Write--->:storageKey:id,storageKeyRename:ID,propertyName:id,dataStorePropertyName:user_info,typename:kotlin.Int,storageValue:result.list.id
+            argument?.let { //                logger.printVma(true, "parentTypeName:${parentTypeName},typeName:${typeName},parent:${parent},propertyName:${propertyName}")
+                storageDataVerification(parentTypeName, property) //Write--->:storageKey:id,storageKeyRename:ID,propertyName:id,dataStorePropertyName:user_info,typename:kotlin.Int,storageValue:result.list.id
                 val storageKey = it.value.toString()
                 val storageKeyRename = storageKey.reConstName()
-                logger.printVma(
-                    enabledLog, "Write annotation--->storageKey:${storageKey}, " + "storageValue:${storageValue}, " + //it.result.total.id
-                            "storageKeyRename:${storageKeyRename}, " +//PreferencesKey
-                            "propertyName:${propertyName}, " + "dataStorePropertyName:${storageList.name}, " +//Context.dataStore扩展属性名
-                            "typename:${typeName}, " //stringPreferencesKey
-                )
-                //最后一个如果是空则添加后缀?
+                logger.printVma(enabledLog, "Write annotation--->storageKey:${storageKey}, " + "storageValue:${storageValue}, " + //it.result.total.id
+                        "storageKeyRename:${storageKeyRename}, " + //PreferencesKey
+                        "propertyName:${propertyName}, " + "dataStorePropertyName:${storageList.name}, " + //Context.dataStore扩展属性名
+                        "typename:${typeName}, " //stringPreferencesKey
+                ) //最后一个如果是空则添加后缀?
                 storageList.storageData.add(StorageData(storageKey, if (typeName.toString().endsWith("?")) storageValue.plus("?") else storageValue, typeName.toString()))
             }
             recursiveSearch(property, functionData, storageList, storageValue, enabledLog)
@@ -191,31 +199,24 @@ class ViewModelVisitor(
      * @param parentTypeName TypeName?
      * @param property KSPropertyDeclaration
      */
-    private fun storageDataVerification(parentTypeName: TypeName?, property: KSPropertyDeclaration) {
-        //检查是否为集合类型（如 List、Set 等）
+    private fun storageDataVerification(parentTypeName: TypeName?, property: KSPropertyDeclaration) { //检查是否为集合类型（如 List、Set 等）
         if (DataCheck.isCollectionType(parentTypeName.toString())) {
             throw VMAAnalysisException("The annotation parameter Key must be unique and cannot be declared in a collection type.property name:<${property.simpleName.asString()}>,TypeName:<${property.type.toTypeName()}>,parentTypeName:<${parentTypeName}>")
-        }
-        //注解只适用基本数据类型，暂不支持对象、集合、数组
+        } //注解只适用基本数据类型，暂不支持对象、集合、数组
         if (!property.type.toTypeName().toString().isBasicDataTypes()) {
             throw VMAAnalysisException("Annotations are only applicable to basic data types and do not currently support objects, collections, and arrays.property name:<${property.simpleName.asString()}>,TypeName:<${property.type.toTypeName()}>")
         }
     }
 
 
-    private fun recursiveSearch(property: KSPropertyDeclaration, functionData: FunctionData, storageList: StorageList, previousParent: String, enabledLog: Boolean) {
-        // 检查属性类型
-        val type = property.type.resolve()
-        //如果属性是一个类，则继续递归访问该类的属性
-        if (type.declaration is KSClassDeclaration) {
-            // 检查是否为集合类型（如 List、Set 等）
-            if (type.declaration.qualifiedName?.asString() in listOf("kotlin.collections.List", "kotlin.collections.Set", "kotlin.collections.Map")) {
-                // 处理泛型参数
+    private fun recursiveSearch(property: KSPropertyDeclaration, functionData: FunctionData, storageList: StorageList, previousParent: String, enabledLog: Boolean) { // 检查属性类型
+        val type = property.type.resolve() //如果属性是一个类，则继续递归访问该类的属性
+        if (type.declaration is KSClassDeclaration) { // 检查是否为集合类型（如 List、Set 等）
+            if (type.declaration.qualifiedName?.asString() in listOf("kotlin.collections.List", "kotlin.collections.Set", "kotlin.collections.Map")) { // 处理泛型参数
                 type.arguments.forEach { typeArgument ->
                     val argumentType = typeArgument.type?.resolve()
                     argumentType?.let {
-                        if (it.declaration is KSClassDeclaration) {
-                            // 如果泛型参数是一个类，则递归访问
+                        if (it.declaration is KSClassDeclaration) { // 如果泛型参数是一个类，则递归访问
                             findDataWrite((it.declaration as KSClassDeclaration), functionData, storageList, previousParent, type.toTypeName(), enabledLog)
                         }
                     }

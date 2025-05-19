@@ -9,28 +9,33 @@ plugins {
 
 android {
     namespace 'com.hearthappy.viewmodelautomationx'
-    compileSdk 34
+    compileSdk  rootProject.ext.compileSdk
 
     defaultConfig {
-        minSdk 24
-        versionCode 1
-        versionName "1.0"
+        minSdk rootProject.ext.minSdk
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility rootProject.ext.javaVersion
+        targetCompatibility rootProject.ext.javaVersion
     }
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = rootProject.ext.kotlinJvmTarget
     }
 
     buildFeatures {
@@ -42,7 +47,7 @@ android {
 
 dependencies {
 
-
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
     implementation libs.material
@@ -50,28 +55,27 @@ dependencies {
     implementation libs.androidx.activity
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
-//    androidTestImplementation libs.androidx.espresso.core
 
 
+    implementation libs.androidx.activity.ktx
+    implementation libs.androidx.fragment.ktx
     implementation libs.lifecycle.runtime.ktx
     implementation libs.lifecycle.viewmodel.ktx
     implementation libs.squareup.converter.gson
     implementation libs.squareup.adapter.rxjava2
     implementation libs.squareup.okhttp3
-//    def room_version = "2.5.0"
-//    implementation "androidx.room:room-compiler:$room_version"
-//    implementation "androidx.room:room-compiler-processing:$room_version"
-//    implementation "androidx.room:room-runtime:$room_version"
-//    annotationProcessor "androidx.room:room-compiler:$room_version"
 
 
     implementation libs.datastore.preferences
     implementation libs.datastore.preferences.core
 
+    //远程库
+//    implementation libs.github.vma.annotations
+//    implementation libs.github.vma.ktx
+//    ksp libs.github.vma.processor
+
     implementation project(':vma-ktx')
     implementation project(':annotations')
-//    implementation project
-
-    //注意：要求jdk11才能将生成文件作为资源引用
+    //注意：要求jdk11或更高才能将生成文件作为资源引用
     ksp project(":processor")
 }

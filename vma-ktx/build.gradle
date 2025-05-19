@@ -1,27 +1,32 @@
 plugins {
     id 'com.android.library'
     id 'maven-publish'
+    id 'signing'
     id 'org.jetbrains.kotlin.android'
 //    alias(libs.plugins.kotlin.android)
 }
-group("com.hearthappy")
-version("1.0.0")
+def publishVersion=rootProject.ext.publishVersion
 // Notice: 2022/1/11 Android依赖发布函数库
 
-task javadoc(type: Javadoc) {
+tasks.register('javadoc', Javadoc) {
     source = android.sourceSets.main.java.sourceFiles
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
     archiveClassifier.set("javadoc")
     from javadoc.destinationDir
 }
 
-
-task sourceJar(type: Jar) {
+tasks.register('sourceJar', Jar) {
     from android.sourceSets.main.java.srcDirs
     archiveClassifier.set("sources")
+}
+tasks.register('zipRepo', Zip) {
+    from "$buildDir/repo"
+    archiveFileName = 'io.zip'
+    destinationDirectory = file(buildDir)
 }
 
 afterEvaluate {
@@ -29,24 +34,66 @@ afterEvaluate {
         publications {
             release(MavenPublication) {
                 from components.release
-                groupId = 'com.hearthappy'
+                groupId = 'io.github.hearthappy'
                 artifactId = 'vma-ktx'
-                version = '1.0.0'
+                version = publishVersion
                 artifacts {
                     archives(javadocJar)
                     archives(sourceJar)
                 }
+                pom {
+                    name = 'vma-ktx'
+                    description = 'ViewModelAutomation extension library'
+                    url = 'https://github.com/HeartHappy/ViewModelAutomationX'
+
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'HeartHappy'
+                            name = 'এ᭄白ຼ龙້໌ᮨꦿ'
+                            email = '1096885636@qq.com'
+                        }
+                    }
+
+                    scm {
+                        connection = 'scm:git://github.com/HeartHappy/ViewModelAutomationX'
+                        developerConnection = 'scm:git:ssh://github.com/HeartHappy/ViewModelAutomationX'
+                        url = 'https://github.com/HeartHappy/ViewModelAutomationX'
+                    }
+                }
             }
         }
+        repositories {
+            maven {
+                url = uri("${buildDir}/repo") // 本地仓库路径
+            }
+        }
+    }
+    signing {
+        //gpg签名认证
+        sign(publishing.publications.release)
+    }
+    // 设置 zipRepo 任务依赖于发布任务
+    tasks.named('zipRepo') { dependsOn(publishReleasePublicationToMavenRepository) }
+
+    // 确保发布任务完成后总是执行 zipRepo 任务，即使发布任务失败
+    tasks.named('publishReleasePublicationToMavenRepository') {
+        finalizedBy(tasks.named('zipRepo'))
     }
 }
 
 android {
     namespace 'com.hearthappy.vma_ktx'
-    compileSdk 34
+    compileSdk rootProject.ext.compileSdk
 
     defaultConfig {
-        minSdk 21
+        minSdk rootProject.ext.minSdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -59,24 +106,22 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility rootProject.ext.javaVersion
+        targetCompatibility rootProject.ext.javaVersion
     }
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = rootProject.ext.kotlinJvmTarget
     }
 }
 
 dependencies {
-    implementation libs.androidx.core.ktx
+//    implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
-    implementation libs.material
 //    implementation libs.androidx.activity
-    implementation libs.androidx.constraintlayout
     implementation libs.kotlinx.corountines
 
     implementation libs.kotlin.reflect
-    implementation libs.lifecycle.runtime.ktx
+//    implementation libs.lifecycle.runtime.ktx
     implementation libs.lifecycle.viewmodel.ktx
 
 

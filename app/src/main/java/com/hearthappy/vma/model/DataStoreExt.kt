@@ -40,7 +40,6 @@ suspend inline fun <reified R : Any> DataStore<Preferences>.readMultiple(vararg 
 //            is ByteArray -> preferences[byteArrayPreferencesKey(key.toString())]
             else         -> Unit
         }
-
     }.toTypedArray()
     block(array)
 }

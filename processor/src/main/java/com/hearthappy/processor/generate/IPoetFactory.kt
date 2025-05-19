@@ -11,7 +11,10 @@ import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
-
+/**
+ * @author ChenRui
+ * ClassDescription：Poet工厂
+ */
 interface IPoetFactory {
 
     //创建文件

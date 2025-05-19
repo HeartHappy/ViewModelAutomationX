@@ -18,10 +18,12 @@ import com.hearthappy.processor.log.printGenerateStart
 import com.hearthappy.processor.log.printGenerateVMATook
 import com.hearthappy.processor.log.printParsing
 import com.hearthappy.processor.log.printStart
-import com.hearthappy.processor.log.printVma
 import com.hearthappy.processor.model.GenerateViewModelData
 import kotlin.system.measureTimeMillis
-
+/**
+ * @author ChenRui
+ * ClassDescription： ViewModel Symbol Processing
+ */
 class ViewModelSymbolProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
         return ViewModelSymbolProcessor(
@@ -49,14 +51,14 @@ class ViewModelSymbolProvider : SymbolProcessorProvider {
                 parsingVMAProcess(resolver, vmaSymbols, viewModelData)
                 generateVMAProcess()
             }
-            logger.printGenerateVMATook(viewModelData.viewModelData.size, measureTimeMillis)
+            logger.printGenerateVMATook(viewModelData.data.size, measureTimeMillis)
 
             return emptyList()
         }
 
 
         private fun generateVMAProcess() {
-            viewModelData.viewModelData.forEach {
+            viewModelData.data.forEach {
                 viewModelFactory.apply {
                     logger.printGenerateStart(it.enabledLog, it.className)
                     generateViewModel(it).apply {

@@ -22,7 +22,9 @@ import com.hearthappy.processor.constant.Constant.STATE_FLOW_PKG
 import com.squareup.kotlinpoet.ClassName
 
 /**
- * 直接创建Classname
+ * Created Date: 2024/1/1
+ * @author ChenRui
+ * ClassDescription： 直接创建Classname
  */
 object AndroidTypeNames {
     internal val Application = ClassName(APPLICATION_PKG, APPLICATION)

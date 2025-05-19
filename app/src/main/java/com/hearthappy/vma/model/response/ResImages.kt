@@ -3,7 +3,7 @@ package com.hearthappy.vma.model.response
 import com.hearthappy.annotations.storage.DataStore
 import com.hearthappy.annotations.storage.DataWrite
 
-@DataStore("user_image_table")
+@DataStore("user_image_table",false)
 data class ResImages(
     @DataWrite("code")
     val code: Int,

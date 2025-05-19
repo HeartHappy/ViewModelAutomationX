@@ -19,3 +19,45 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+# 避免混淆Android基本组件，下面是兼容性比较高的规则
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Fragment
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.app.backup.BackupAgentHelper
+-keep public class * extends android.preference.Preference
+-keep public class * extends android.view.View
+
+# ViewModelAutomationX
+-keep public class * extends androidx.lifecycle.AndroidViewModel
+-keep class com.hearthappy.vma_ktx.factory.** { *; }
+-keep class com.hearthappy.vma_ktx.network.** { *; }
+-keep class com.hearthappy.vma.model.response.** {*;}
+# 如果工厂方法使用了泛型，请确保签名属性也被保留
+-keepattributes Signature
+
+# 如果使用了注解处理器生成代码，确保注解信息不丢失
+#-keepattributes *Annotation*
+
+# 如果使用了反射，请确保反射调用的目标类和方法不被混淆
+-keepclassmembers class * {
+    @org.jetbrains.annotations.NotNull <methods>;
+}
+
+# 保留support下的所有类及其内部类
+-keep class android.support.** {*;}
+-keep interface android.support.** {*;}
+-keep public class * extends android.support.v4.**
+-keep public class * extends android.support.v7.**
+-keep public class * extends android.support.annotation.**
+-dontwarn android.support.**
+# 保留androidx下的所有类及其内部类
+-keep class androidx.** {*;}
+-keep public class * extends androidx.**
+-keep interface androidx.** {*;}
+-keep class com.google.android.material.** {*;}
+-dontwarn androidx.**
+-dontwarn com.google.android.material.**
+-dontnote com.google.android.material.**

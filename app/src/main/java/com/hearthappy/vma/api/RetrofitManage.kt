@@ -1,6 +1,5 @@
 package com.hearthappy.vma.api
 
-import com.hearthappy.ksp.api.ResponseInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -13,7 +12,6 @@ object RetrofitManage {
     private const val WRITE_TIMEOUT = 5L
 
         private const val BASE_URL = "https://api.apiopen.top/api/"
-//    private const val BASE_URL = "http://yyapi.study68.cn/"
 
     private fun initRetrofit(): Retrofit {
         val okHttpClientBuilder = OkHttpClient().newBuilder().apply {

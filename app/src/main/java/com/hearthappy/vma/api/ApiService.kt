@@ -7,9 +7,8 @@ import com.hearthappy.vma.model.request.LoginBody
 import com.hearthappy.vma.model.response.BaseData
 import com.hearthappy.vma.model.response.ResImages
 import com.hearthappy.vma.model.response.ResLogin
+import com.hearthappy.vma.model.response.ResSentences
 import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -27,10 +26,8 @@ interface ApiService {
     suspend fun getImage(@Query("page") page: Int, @Query("size") size: Int): ResImages
 
 
-    @BindLiveData("getToken")
-    @POST("room/getEasemob/token")
-    @FormUrlEncoded
-    suspend fun getToken(@Field("deviceID") deviceID: String, @Field("phone_model") phone_model: String): BaseData<ResLogin>
-
+    @BindLiveData
+    @GET("sentences")
+    suspend fun getSentences(): BaseData<ResSentences>
 
 }

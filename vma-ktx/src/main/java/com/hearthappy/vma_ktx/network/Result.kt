@@ -1,8 +1,8 @@
 package com.hearthappy.vma_ktx.network
 
-/**5
- * A generic class that holds a value with its loading status.
- * @param <T> LiveData
+/**
+ * @author ChenRui
+ * ClassDescription： LiveData响应结果
  */
 sealed class Result<out T : Any> {
 

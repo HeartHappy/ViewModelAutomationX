@@ -20,17 +20,21 @@ import com.hearthappy.processor.ext.DataStoreTypeNames
 import com.hearthappy.processor.ext.KotlinTypeNames
 import com.hearthappy.processor.generate.IPoetFactory
 import com.hearthappy.processor.generate.impl.PoetFactory
+import com.hearthappy.processor.log.printDataStore
 import com.hearthappy.processor.model.GenerateDataStoreData
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.KModifier
-
+/**
+ * @author ChenRui
+ * ClassDescription： DataStore Symbol Processing
+ */
 class DataStoreSymbolProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
         return DataStoreSymbolProcessor(environment.logger, environment.codeGenerator, PoetFactory())
     }
 
     inner class DataStoreSymbolProcessor(val logger: KSPLogger, val codeGenerator: CodeGenerator, val dataStoreFactory: IPoetFactory) : SymbolProcessor {
-        private val dataStoreData = GenerateDataStoreData()
+        private val generateDataStoreData = GenerateDataStoreData()
 
         override fun process(resolver: Resolver): List<KSAnnotated> {
             val dsSymbols = resolver.getSymbolsWithAnnotation(DataStore::class.qualifiedName!!).filter { it.validate() }
@@ -41,7 +45,8 @@ class DataStoreSymbolProvider : SymbolProcessorProvider {
         }
 
         private fun generateDSProcess() {
-            dataStoreData.dataStoreData.forEach {
+            generateDataStoreData.data.forEach {
+                logger.printDataStore(it.enabledLog, "$it")
                 dataStoreFactory.apply {
                     createFileSpec(it.name.reFileName(), Constant.GENERATE_DATASTORE_PKG).apply {
                         addSpecProperty(it.name.rename(), it.propertyType, AndroidTypeNames.Context, true, CodeBlock.of("%T(name = %S)", DataStoreTypeNames.DataStorePreferences, it.name), KModifier.PUBLIC)
@@ -49,14 +54,16 @@ class DataStoreSymbolProvider : SymbolProcessorProvider {
                         it.storageMap.forEach { map ->
                             classSpec.addSpecProperty(map.key, KotlinTypeNames.String, null, false, CodeBlock.of("%S", map.value))
                         }
-                        it.containingFile?.let { cf -> buildAndWrite(classSpec.build(),cf, codeGenerator) } ?: throw GenerateException("Source file not found")
+                        it.containingFile?.let { cf ->
+                            buildAndWrite(classSpec.build(), cf, codeGenerator)
+                        } ?: throw GenerateException("Source file not found")
                     }
                 }
             }
         }
 
         private fun parsingDSProcess(dsSymbols: Sequence<KSAnnotated>, resolver: Resolver) {
-            dsSymbols.forEachIndexed { index, ksAnnotated -> ksAnnotated.accept(DataStoreVisitor(resolver, logger, dataStoreData, index), Unit) }
+            dsSymbols.forEachIndexed { index, ksAnnotated -> ksAnnotated.accept(DataStoreVisitor(resolver, logger, generateDataStoreData, index), Unit) }
         }
     }
 }
