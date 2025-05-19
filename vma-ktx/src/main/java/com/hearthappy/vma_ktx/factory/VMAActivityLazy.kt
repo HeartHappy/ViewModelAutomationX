@@ -15,6 +15,9 @@ inline fun <reified VM : ViewModel, API> AppCompatActivity.vma(api:  API): Lazy<
     return VMAActivityLazy(this, api, VM::class)
 }
 
+inline fun <reified VM : ViewModel, API> AppCompatActivity.vma(crossinline apiBlock: () -> API): Lazy<VM> {
+    return VMAActivityLazy(this, apiBlock(), VM::class)
+}
 
 class VMAActivityLazy<VM : ViewModel, API>(private val activity: AppCompatActivity, private val apiClass: API, val vmClass: KClass<VM>) : Lazy<VM> {
     private var vm: VM? = null

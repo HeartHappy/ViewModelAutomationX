@@ -1,7 +1,6 @@
 package com.hearthappy.vma_ktx.network
 
 /**
- * Created Date: 2025/5/13
  * @author ChenRui
  * ClassDescription：StateFlow响应结果
  */

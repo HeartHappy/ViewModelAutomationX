@@ -13,8 +13,6 @@ import com.hearthappy.vma.generate.viewmodel.MainViewModel
 import com.hearthappy.vma_ktx.factory.vma
 import com.hearthappy.vma_ktx.factory.vmaFromActivity
 import com.hearthappy.vma_ktx.network.FlowResult
-import com.hearthappy.vma_ktx.network.Result
-import com.hearthappy.vma_ktx.network.asFailedMessage
 import com.hearthappy.vma_ktx.network.asThrowableMessage
 import kotlinx.coroutines.launch
 
@@ -53,11 +51,11 @@ class MainFragment : Fragment() {
 
     private fun initViewModelListener() {
         lifecycleScope.launch {
-            viewModel.sfLogin //                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+            viewModel.sfImages //                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
                 .collect {
                     when (it) {
                         is FlowResult.Default -> {}
-                        is FlowResult.Failed -> showMessage(it.asFailedMessage())
+//                        is FlowResult.Failed -> showMessage(it.asFailedMessage())
 
                         is FlowResult.Loading -> showMessage("加载")
 
@@ -68,30 +66,21 @@ class MainFragment : Fragment() {
                 }
         }
 
-        lifecycleScope.launch { //            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-            viewModel.sfImages.collect {
-                when (it) {
-                    is FlowResult.Default -> {}
-                    is FlowResult.Failed -> showMessage(it.asFailedMessage())
-
-                    is FlowResult.Loading -> showMessage("加载")
-
-                    is FlowResult.Succeed<*> -> showMessage(it.body.toString())
-
-                    is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
-                }
-            } //            }
-        }
-
-        viewModel.ldGetSentences.observe(viewLifecycleOwner) {
-            it?.let {
-                when (it) {
-                    is Result.Failed -> {}
-                    is Result.Succeed -> {}
-                    is Result.Throwable -> {}
-                }
-            }
-        }
+//        lifecycleScope.launch {
+        //            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+//            viewModel.sfImages.collect {
+//                when (it) {
+//                    is FlowResult.Default -> {}
+//
+//                    is FlowResult.Loading -> showMessage("加载")
+//
+//                    is FlowResult.Succeed<*> -> showMessage(it.body.toString())
+//
+//                    is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
+//                }
+//            }
+        //            }
+//        }
     }
 
     private fun showMessage(message: String?) {

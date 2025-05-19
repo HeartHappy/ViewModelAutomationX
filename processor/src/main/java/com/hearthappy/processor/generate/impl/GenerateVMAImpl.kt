@@ -30,7 +30,6 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
 
 /**
- * Created Date: 2024/2/8
  * @author ChenRui
  * ClassDescription： 生成VMA实体类
  */

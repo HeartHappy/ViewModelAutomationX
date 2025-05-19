@@ -8,7 +8,9 @@ import kotlin.reflect.KClass
 inline fun <reified VM : ViewModel, API> Fragment.vma(api: API): Lazy<VM> {
     return VMAFragmentLazy(this, api, VM::class)
 }
-
+inline fun <reified VM : ViewModel, API> Fragment.vma(crossinline apiBlock: () -> API): Lazy<VM> {
+    return VMAFragmentLazy(this, apiBlock(), VM::class)
+}
 
 class VMAFragmentLazy<VM : ViewModel, API>(private val fragment: Fragment, private val apiClass: API, val vmClass: KClass<VM>) : Lazy<VM> {
     private var vm: VM? = null

@@ -6,7 +6,7 @@ buildscript {
         targetSdk = 31
         versionCode = 1
         versionName = "1.0.0"
-        javaVersion = JavaVersion.VERSION_1_8
+        javaVersion = JavaVersion.VERSION_11
         kotlinJvmTarget = "11"
         publishVersion="1.0.0"
     }

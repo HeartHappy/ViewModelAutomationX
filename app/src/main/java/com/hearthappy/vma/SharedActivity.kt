@@ -14,7 +14,6 @@ import com.hearthappy.vma_ktx.factory.vma
 import com.hearthappy.vma_ktx.network.Result
 
 /**
- * Created Date: 2024/12/27
  * @author ChenRui
  * ClassDescription：测试Fragment共享Activity的ViewModel实例
  */
@@ -39,7 +38,6 @@ class SharedActivity : AppCompatActivity() {
         viewModel.ldGetSentences.observe(this@SharedActivity) {
             it?.let {
                 when (it) {
-                    is Result.Failed -> {}
                     is Result.Succeed -> {}
                     is Result.Throwable -> {}
                 }
