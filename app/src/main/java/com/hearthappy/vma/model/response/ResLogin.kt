@@ -8,13 +8,14 @@ data class ResLogin(
     val code: Int,
     @DataWrite("msg")
     val message: String,
-    val result: Result
+    val result: Result?
 ) {
     data class Result(
         @DataWrite("account")
         val account: String,
         val createdAt: String,
         val deletedAt: Any,
+        @DataWrite("id")
         val id: Int,
         val level: Int,
         @DataWrite("token")

@@ -12,7 +12,7 @@ import com.hearthappy.vma.generate.viewmodel.MainViewModel
 import com.hearthappy.vma_ktx.factory.vma
 import com.hearthappy.vma_ktx.network.FlowResult
 import com.hearthappy.vma_ktx.network.Result
-import com.hearthappy.vma_ktx.network.asFailedMessage
+//import com.hearthappy.vma_ktx.network.asFailedMessage
 import com.hearthappy.vma_ktx.network.asThrowableMessage
 import kotlinx.coroutines.launch
 
@@ -45,14 +45,14 @@ class MainFragment : Fragment() {
                 //                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
                 .collect {
                     when (it) {
-                        is FlowResult.Default    -> {}
-                        is FlowResult.Failed     -> showMessage(it.asFailedMessage())
+                        is FlowResult.Default -> {}
+//                        is FlowResult.Failed     -> showMessage(it.asFailedMessage())
 
-                        is FlowResult.Loading    -> showMessage("加载")
+                        is FlowResult.Loading -> showMessage("加载")
 
                         is FlowResult.Succeed<*> -> showMessage(it.body.toString())
 
-                        is FlowResult.Throwable  -> showMessage(it.asThrowableMessage())
+                        is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
                     }
                 }
         }
@@ -61,14 +61,14 @@ class MainFragment : Fragment() {
             //            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
             viewModel.sfImages.collect {
                 when (it) {
-                    is FlowResult.Default    -> {}
-                    is FlowResult.Failed     -> showMessage(it.asFailedMessage())
+                    is FlowResult.Default -> {}
+//                    is FlowResult.Failed     -> showMessage(it.asFailedMessage())
 
-                    is FlowResult.Loading    -> showMessage("加载")
+                    is FlowResult.Loading -> showMessage("加载")
 
                     is FlowResult.Succeed<*> -> showMessage(it.body.toString())
 
-                    is FlowResult.Throwable  -> showMessage(it.asThrowableMessage())
+                    is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
                 }
             }
             //            }
@@ -77,8 +77,8 @@ class MainFragment : Fragment() {
         viewModel.getTokenLiveData.observe(viewLifecycleOwner) {
             it?.let {
                 when (it) {
-                    is Result.Failed    -> {}
-                    is Result.Succeed   -> {}
+//                    is Result.Failed    -> {}
+                    is Result.Succeed -> {}
                     is Result.Throwable -> {}
                 }
             }

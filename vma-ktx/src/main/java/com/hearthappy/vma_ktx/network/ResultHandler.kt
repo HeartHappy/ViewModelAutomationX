@@ -6,13 +6,13 @@ data class FailedBody(val statusCode: Int, val text: String?)
 data class ErrorMessage(val error: String)
 
 
-fun FlowResult.Failed.asFailedMessage(): String? {
-    return failedBody.getFailedMessage()
-}
-
-fun Result.Failed.asFailedMessage(): String? {
-    return failedBody.getFailedMessage()
-}
+//fun FlowResult.Failed.asFailedMessage(): String? {
+//    return failedBody.getFailedMessage()
+//}
+//
+//fun Result.Failed.asFailedMessage(): String? {
+//    return failedBody.getFailedMessage()
+//}
 
 fun FlowResult.Throwable.asThrowableMessage(): String? {
     return this.throwable.message

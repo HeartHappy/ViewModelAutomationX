@@ -29,6 +29,11 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
 
+/**
+ * Created Date: 2024/2/8
+ * @author ChenRui
+ * ClassDescription： 生成VMA实体类
+ */
 class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
 
     private val generateSpec by lazy { GenerateSpec() }
@@ -44,7 +49,7 @@ class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
             logger.printVma(vma.enabledLog, "Generating property--->name:${it.propertyAliasName},annotationType:${it.annotationType},returnType: ${it.returnType}")
             when (it.annotationType) {
                 Constant.BIND_LIVE_DATA -> generatePropertyByLiveData(it.propertyAliasName, it.returnType)
-                else                    -> generatePropertyByStateFlow(it.propertyAliasName, it.returnType)
+                else -> generatePropertyByStateFlow(it.propertyAliasName, it.returnType)
             }
         }
     }
@@ -57,7 +62,7 @@ class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
                 this.addParameters(it.parameterList)
                 when (it.annotationType) {
                     Constant.BIND_LIVE_DATA -> generateFunctionContent(vma, it, LIVE_DATA_RESULT)
-                    else                    -> generateFunctionContent(vma, it, FLOW_RESULT)
+                    else -> generateFunctionContent(vma, it, FLOW_RESULT)
                 }
                 logger.printVma(vma.enabledLog, "Generating function--->name:${it.methodName},params:${it.parameterList.joinToString { jts -> jts.name }}")
             }
@@ -133,8 +138,11 @@ class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
      * @param name String
      */
     private fun FunSpec.Builder.handlerNullProperties(storageData: MutableList<StorageData>, preferences: String, vma: ViewModelData, name: String) {
+        val filter = storageData.filter { it.actionValue.contains(".") && !it.actionValue.contains("?") }
+        if (filter.isNotEmpty()) filter.first().actionValue.split(".").apply { addStatement("%L%Lit.${this[0]}?:return@edit", INDENTATION, INDENTATION) }
         storageData.forEach {
-            if (it.actionValue.contains("?")) {//为空的处理
+            logger.printVma(true, "storageData:${it.actionValue}，key:${it.key},type:${it.type}")
+            if (it.actionValue.contains(".")) if (it.actionValue.contains("?")) {//为空的处理
                 addStatement("%L%L%L[%L(%L.%L)] = it.%L?:%L", INDENTATION, INDENTATION, preferences, it.type.string2preferenceType(vma.imports), name.rePreferencesKeysName(), it.key.reConstName(), it.actionValue.replaceLastQuestionMark(), it.type.defaultValue())
             } else {
                 addStatement("%L%L%L[%L(%L.%L)] = it.%L", INDENTATION, INDENTATION, preferences, it.type.string2preferenceType(vma.imports), name.rePreferencesKeysName(), it.key.reConstName(), it.actionValue)
