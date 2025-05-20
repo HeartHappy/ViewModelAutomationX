@@ -12,14 +12,14 @@ import kotlin.reflect.KClass
  * @return Lazy<VM>
  */
 inline fun <reified VM : ViewModel, API> AppCompatActivity.vma(api:  API): Lazy<VM> {
-    return VMAActivityLazy(this, api, VM::class)
+    return VMAActivityLazy(this, api, VM::class.java)
 }
 
 inline fun <reified VM : ViewModel, API> AppCompatActivity.vma(crossinline apiBlock: () -> API): Lazy<VM> {
-    return VMAActivityLazy(this, apiBlock(), VM::class)
+    return VMAActivityLazy(this, apiBlock(), VM::class.java)
 }
 
-class VMAActivityLazy<VM : ViewModel, API>(private val activity: AppCompatActivity, private val apiClass: API, val vmClass: KClass<VM>) : Lazy<VM> {
+class VMAActivityLazy<VM : ViewModel, API>(private val activity: AppCompatActivity, private val apiClass: API, val vmClass: Class<VM>) : Lazy<VM> {
     private var vm: VM? = null
     override val value: VM
         get() {
@@ -27,7 +27,7 @@ class VMAActivityLazy<VM : ViewModel, API>(private val activity: AppCompatActivi
                 this
             } ?: run {
                 val vmaFactory = ViewModelFactory(vmClass, apiClass, activity.application)
-                ViewModelProvider(activity, vmaFactory)[vmClass.java].also { vm = it }
+                ViewModelProvider(activity, vmaFactory)[vmClass].also { vm = it }
             }
         }
 

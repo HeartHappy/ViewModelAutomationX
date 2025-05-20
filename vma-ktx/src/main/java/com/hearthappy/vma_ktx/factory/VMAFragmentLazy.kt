@@ -6,13 +6,13 @@ import androidx.lifecycle.ViewModelProvider
 import kotlin.reflect.KClass
 
 inline fun <reified VM : ViewModel, API> Fragment.vma(api: API): Lazy<VM> {
-    return VMAFragmentLazy(this, api, VM::class)
+    return VMAFragmentLazy(this, api, VM::class.java)
 }
 inline fun <reified VM : ViewModel, API> Fragment.vma(crossinline apiBlock: () -> API): Lazy<VM> {
-    return VMAFragmentLazy(this, apiBlock(), VM::class)
+    return VMAFragmentLazy(this, apiBlock(), VM::class.java)
 }
 
-class VMAFragmentLazy<VM : ViewModel, API>(private val fragment: Fragment, private val apiClass: API, val vmClass: KClass<VM>) : Lazy<VM> {
+class VMAFragmentLazy<VM : ViewModel, API>(private val fragment: Fragment, private val apiClass: API, val vmClass: Class<VM>) : Lazy<VM> {
     private var vm: VM? = null
     override val value: VM
         get() {
@@ -20,7 +20,7 @@ class VMAFragmentLazy<VM : ViewModel, API>(private val fragment: Fragment, priva
                 this
             } ?: run {
                 val vmaFactory = fragment.activity?.run { ViewModelFactory(vmClass, apiClass, this.application) }
-                ViewModelProvider(fragment.viewModelStore, vmaFactory!!)[vmClass.java].also { vm = it }
+                ViewModelProvider(fragment.viewModelStore, vmaFactory!!)[vmClass].also { vm = it }
             }
         }
 

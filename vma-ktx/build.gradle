@@ -120,7 +120,7 @@ dependencies {
 //    implementation libs.androidx.activity
     implementation libs.kotlinx.corountines
 
-    implementation libs.kotlin.reflect
+//    api libs.kotlin.reflect
 //    implementation libs.lifecycle.runtime.ktx
     implementation libs.lifecycle.viewmodel.ktx
 
