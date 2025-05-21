@@ -96,6 +96,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+//        lifecycleScope.launch {
+//            viewModel.sfLogin.collect{
+//                when (it) {
+//                    is FlowResult.Default -> Unit
+//                    is FlowResult.Loading -> Unit
+//                    is FlowResult.Succeed -> {
+//                        Toast.makeText(this@MainActivity, "${it.body.result}", Toast.LENGTH_SHORT).show()
+//                    }
+//                    is FlowResult.Throwable ->it.toast()
+//                }
+//            }
+//        }
     }
 
     private fun showMessage(message: String?) {

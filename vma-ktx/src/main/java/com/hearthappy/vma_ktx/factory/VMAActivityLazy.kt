@@ -3,7 +3,6 @@ package com.hearthappy.vma_ktx.factory
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import kotlin.reflect.KClass
 
 /**
  * @author ChenRui

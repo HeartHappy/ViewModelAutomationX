@@ -19,7 +19,7 @@ interface ApiService {
 
     @BindStateFlow
     @POST("login")
-    suspend fun login(@Body loginBody: LoginBody): ResLogin
+    suspend fun login(@Body loginBody: LoginBody): BaseData<ResLogin>
 
     @BindStateFlow("getImages", "sfImages")
     @GET("getImages")

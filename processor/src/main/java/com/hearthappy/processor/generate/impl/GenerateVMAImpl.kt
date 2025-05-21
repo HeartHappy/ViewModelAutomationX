@@ -43,8 +43,7 @@ class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
     }
 
     override fun TypeSpec.Builder.generateProperty(vma: ViewModelData) {
-        vma.functionList.forEach {
-//            val returnType = it.returnType?.run { it.returnParentType.parameterizedBy(this) } ?: it.returnParentType
+        vma.functionList.forEach { //            val returnType = it.returnType?.run { it.returnParentType.parameterizedBy(this) } ?: it.returnParentType
             logger.printVma(vma.enabledLog, "Generating property--->name:${it.propertyAliasName},annotationType:${it.annotationType},returnType: ${it.returnType}")
             when (it.annotationType) {
                 Constant.BIND_LIVE_DATA -> generatePropertyByLiveData(it.propertyAliasName, it.returnType)
@@ -55,8 +54,7 @@ class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
 
 
     override fun TypeSpec.Builder.generateMethod(vma: ViewModelData) {
-        vma.functionList.forEach {
-//            val returnType = it.returnType?.run { it.returnParentType.parameterizedBy(this) } ?: it.returnParentType
+        vma.functionList.forEach { //            val returnType = it.returnType?.run { it.returnParentType.parameterizedBy(this) } ?: it.returnParentType
             val function = FunSpec.builder(it.methodAliasName).apply {
                 this.addParameters(it.parameterList)
                 when (it.annotationType) {
@@ -74,17 +72,13 @@ class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
         logger.printVma(vma.enabledLog, "Create a ${vma.className} file and write the class to the file")
     }
 
-    private fun TypeSpec.Builder.generatePropertyByLiveData(propertyName: String, resultClassName: TypeName) {
-        //Create a private property
-        addProperty(generateSpec.generateDelegatePropertySpec(propertyName = propertyName.privatePropertyName(), receiverType = null, propertyType = LifecyclesTypeNames.MutableLiveData.parameterizedBy(VMANetworkTypeNames.LiveDataResult.parameterizedBy(resultClassName)), delegateValue = "${Constant.MUTABLE_LIVEDATA}()", KModifier.PRIVATE))
-        //Create a public property
+    private fun TypeSpec.Builder.generatePropertyByLiveData(propertyName: String, resultClassName: TypeName) { //Create a private property
+        addProperty(generateSpec.generateDelegatePropertySpec(propertyName = propertyName.privatePropertyName(), receiverType = null, propertyType = LifecyclesTypeNames.MutableLiveData.parameterizedBy(VMANetworkTypeNames.LiveDataResult.parameterizedBy(resultClassName)), delegateValue = "${Constant.MUTABLE_LIVEDATA}()", KModifier.PRIVATE)) //Create a public property
         addProperty(generateSpec.generatePropertySpec(propertyName, LifecyclesTypeNames.LiveData.parameterizedBy(VMANetworkTypeNames.LiveDataResult.parameterizedBy(resultClassName)), initValue = propertyName.privatePropertyName()))
     }
 
-    private fun TypeSpec.Builder.generatePropertyByStateFlow(propertyName: String, resultClassName: TypeName) {
-        //Create a private property
-        addProperty(generateSpec.generateDelegatePropertySpec(propertyName = propertyName.privatePropertyName(), receiverType = null, propertyType = LifecyclesTypeNames.MutableStateFlow.parameterizedBy(VMANetworkTypeNames.FlowResult.parameterizedBy(resultClassName)), delegateValue = "${Constant.MUTABLE_STATE_FLOW}(${FLOW_RESULT}.Default)", KModifier.PRIVATE))
-        //Create a public property
+    private fun TypeSpec.Builder.generatePropertyByStateFlow(propertyName: String, resultClassName: TypeName) { //Create a private property
+        addProperty(generateSpec.generateDelegatePropertySpec(propertyName = propertyName.privatePropertyName(), receiverType = null, propertyType = LifecyclesTypeNames.MutableStateFlow.parameterizedBy(VMANetworkTypeNames.FlowResult.parameterizedBy(resultClassName)), delegateValue = "${Constant.MUTABLE_STATE_FLOW}(${FLOW_RESULT}.Default)", KModifier.PRIVATE)) //Create a public property
         addProperty(generateSpec.generatePropertySpec(propertyName, LifecyclesTypeNames.StateFlow.parameterizedBy(VMANetworkTypeNames.FlowResult.parameterizedBy(resultClassName)), initValue = propertyName.privatePropertyName()))
     }
 
@@ -117,8 +111,7 @@ class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
                     val preferences = "preferences"
                     vma.imports.add(ClassName(Constant.GENERATE_DATASTORE_PKG, dataStorePropertyName))
                     vma.imports.add(ClassName(Constant.GENERATE_DATASTORE_PKG, dataStorePreferencesKeys))
-                    vma.imports.add(DataStoreTypeNames.DataStoreEdit)
-//                    vma.imports.add(DataStoreTypeNames.DataStorePreferencesKeys)
+                    vma.imports.add(DataStoreTypeNames.DataStoreEdit) //                    vma.imports.add(DataStoreTypeNames.DataStorePreferencesKeys)
                     addStatement("}, onDataStore = {")
                     addStatement("%L%L.%L.edit { %L->", INDENTATION, Constant.APP, dataStorePropertyName, preferences)
                     handlerNullProperties(storageData, preferences, vma, name)
@@ -140,8 +133,7 @@ class GenerateVMAImpl(private val logger: KSPLogger) : IVMAFactory {
         val filter = storageData.filter { it.actionValue.contains(".") && !it.actionValue.contains("?") }
         if (filter.isNotEmpty()) filter.first().actionValue.split(".").apply { addStatement("%L%Lit.${this[0]}?:return@edit", INDENTATION, INDENTATION) }
         storageData.forEach {
-            logger.printVma(true, "storageData:${it.actionValue}，key:${it.key},type:${it.type}")
-            if (it.actionValue.contains(".")) if (it.actionValue.contains("?")) {//为空的处理
+            if (it.actionValue.contains(".")) if (it.actionValue.contains("?")) { //为空的处理
                 addStatement("%L%L%L[%L(%L.%L)] = it.%L?:%L", INDENTATION, INDENTATION, preferences, it.type.string2preferenceType(vma.imports), name.rePreferencesKeysName(), it.key.reConstName(), it.actionValue.replaceLastQuestionMark(), it.type.defaultValue())
             } else {
                 addStatement("%L%L%L[%L(%L.%L)] = it.%L", INDENTATION, INDENTATION, preferences, it.type.string2preferenceType(vma.imports), name.rePreferencesKeysName(), it.key.reConstName(), it.actionValue)
