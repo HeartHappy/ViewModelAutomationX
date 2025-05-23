@@ -12,8 +12,7 @@ import kotlinx.coroutines.withContext
 /**
  * @author ChenRui
  * ClassDescription： ViewModel生成后调用
- */
-//inline fun <reified R : Any> ViewModel.requestScopeX(crossinline io: suspend () -> R, crossinline onSucceed: (R) -> Unit, crossinline onThrowable: (Throwable) -> Unit, crossinline onDataStore: suspend CoroutineScope.(R) -> Unit = {}, dispatcher: CoroutineDispatcher = Dispatchers.Main) {
+ */ //inline fun <reified R : Any> ViewModel.requestScopeX(crossinline io: suspend () -> R, crossinline onSucceed: (R) -> Unit, crossinline onThrowable: (Throwable) -> Unit, crossinline onDataStore: suspend CoroutineScope.(R) -> Unit = {}, dispatcher: CoroutineDispatcher = Dispatchers.Main) {
 //
 //    viewModelScope.launch(Dispatchers.IO) {
 //        try {
@@ -28,7 +27,6 @@ import kotlinx.coroutines.withContext
 //}
 
 fun <R> ViewModel.requestScope(io: suspend () -> R, onSucceed: (R) -> Unit, onThrowable: (Throwable) -> Unit, onDataStore: suspend CoroutineScope.(R) -> Unit = {}, dispatcher: CoroutineDispatcher = Dispatchers.Main) {
-
     viewModelScope.launch(Dispatchers.IO) {
         try {
             val result = io()

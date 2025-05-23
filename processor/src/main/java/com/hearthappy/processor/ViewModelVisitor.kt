@@ -2,7 +2,6 @@ package com.hearthappy.processor
 
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.isAbstract
-import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
@@ -26,8 +25,7 @@ import com.hearthappy.processor.ext.BindFunctionArgs
 import com.hearthappy.processor.ext.DataStoreArgs
 import com.hearthappy.processor.ext.ViewModelAutomationArgs
 import com.hearthappy.processor.ext.getGenericProperty
-import com.hearthappy.processor.log.TAG_VMA
-import com.hearthappy.processor.log.printVma
+import com.hearthappy.processor.log.KSPLog
 import com.hearthappy.processor.model.FunctionData
 import com.hearthappy.processor.model.GenerateViewModelData
 import com.hearthappy.processor.model.StorageData
@@ -44,7 +42,6 @@ import com.squareup.kotlinpoet.ksp.toTypeName
  */
 class ViewModelVisitor(
     private val resolver: Resolver,
-    private val logger: KSPLogger,
     private val generateData: GenerateViewModelData,
     private val index: Int,
 ) : KSVisitorVoid() {
@@ -57,7 +54,7 @@ class ViewModelVisitor(
             if (this.isAbstract()) {
                 parsingClassAndAnnotation(viewModelData, apiClassName)
                 classDeclaration.getAllFunctions().forEach { it.accept(this@ViewModelVisitor, data) }
-            } else throw VMAAnalysisException("$TAG_VMA: Please declare the ViewModelAutomation annotation on the interface,currently declare it on the <${apiClassName}> class")
+            } else throw VMAAnalysisException("VMA: Please declare the ViewModelAutomation annotation on the interface,currently declare it on the <${apiClassName}> class")
         }
 
 
@@ -68,7 +65,7 @@ class ViewModelVisitor(
         val viewModelData = generateData.data.get(index = index)
         val functionName = function.simpleName.asString()
         if (DataCheck.isFunction(functionName)) {
-            logger.printVma(viewModelData.enabledLog, "function name: $functionName")
+            KSPLog.printVma(viewModelData.enabledLog, "function name: $functionName")
             FunctionData().apply {
                 this.methodName = functionName
                 parsingFunAnnotation(function, this, functionName, viewModelData)
@@ -99,8 +96,8 @@ class ViewModelVisitor(
                 api = apiClassName.className2PropertyName()
                 constructorParams.add(ParameterSpec(api, ClassName(apiPackage, apiClassName)))
                 constructorParams.add(ParameterSpec(APP, AndroidTypeNames.Application))
-                logger.printVma(enabledLog, "interface name:$apiClassName")
-                logger.printVma(enabledLog, "class annotation:shortName:${it.shortName.asString()},annotationType:${it.annotationType},${it.arguments.toList()},fileName:${className}")
+                KSPLog.printVma(enabledLog, "interface name:$apiClassName")
+                KSPLog.printVma(enabledLog, "class annotation:shortName:${it.shortName.asString()},annotationType:${it.annotationType},${it.arguments.toList()},fileName:${className}")
             }
         }
     }
@@ -128,7 +125,7 @@ class ViewModelVisitor(
                 }
             }
             functionData.annotationType = it.shortName.asString()
-            logger.printVma(viewModelData.enabledLog, "function annotation--->name:${it.shortName.asString()},args:${it.arguments.toList()}")
+            KSPLog.printVma(viewModelData.enabledLog, "function annotation--->name:${it.shortName.asString()},args:${it.arguments.toList()}")
         } ?: throw VMAAnalysisException("No BindLiveData or BindStateFlow annotation was found. Please declare the annotation on the <$functionName> function")
     }
 
@@ -144,7 +141,7 @@ class ViewModelVisitor(
 
             //KSType.toTypeName()扩展函数直接可获取复杂返回类型
             functionData.returnType = toTypeName()
-            logger.printVma(viewModelData.enabledLog, "function returnType--->${functionData.returnType}")
+            KSPLog.printVma(viewModelData.enabledLog, "function returnType--->${functionData.returnType}")
             var typeName = toTypeName().toString()
             var parent: String? = null
             if (typeName.hasGeneric()) {
@@ -173,7 +170,7 @@ class ViewModelVisitor(
                 storageDataVerification(parentTypeName, property) //Write--->:storageKey:id,storageKeyRename:ID,propertyName:id,dataStorePropertyName:user_info,typename:kotlin.Int,storageValue:result.list.id
                 val storageKey = it.value.toString()
                 val storageKeyRename = storageKey.reConstName()
-                logger.printVma(enabledLog, "Write annotation--->storageKey:${storageKey}, " + "storageValue:${storageValue}, " + //it.result.total.id
+                KSPLog.printVma(enabledLog, "Write annotation--->storageKey:${storageKey}, " + "storageValue:${storageValue}, " + //it.result.total.id
                         "storageKeyRename:${storageKeyRename}, " + //PreferencesKey
                         "propertyName:${propertyName}, " + "dataStorePropertyName:${storageList.name}, " + //Context.dataStore扩展属性名
                         "typename:${typeName}, " //stringPreferencesKey
@@ -237,7 +234,7 @@ class ViewModelVisitor(
     private fun parsingFunParams(function: KSFunctionDeclaration, functionData: FunctionData, viewModelData: ViewModelData) {
         function.parameters.map {
             val paramName = it.name?.asString() ?: throw VMAAnalysisException("paramName is null")
-            logger.printVma(viewModelData.enabledLog, "function parameter--->name:$paramName,typeName:${it.type.toTypeName()}")
+            KSPLog.printVma(viewModelData.enabledLog, "function parameter--->name:$paramName,typeName:${it.type.toTypeName()}")
             ParameterSpec(paramName, it.type.toTypeName())
         }.also {
             functionData.parameterList.addAll(it)

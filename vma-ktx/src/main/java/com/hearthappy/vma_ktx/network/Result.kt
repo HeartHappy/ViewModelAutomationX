@@ -10,13 +10,6 @@ sealed class Result<out T : Any> {
 //    data class Failed(val failedBody: FailedBody, val order: Int = InSitu) : Result<Nothing>()
     data class Throwable(val throwable: kotlin.Throwable, val order: Int = InSitu) : Result<Nothing>()
 
-    override fun toString(): String {
-        return when (this) {
-            is Succeed<*> -> "Success[body=$body]"
-//            is Failed     -> "Failed[failedBody=$failedBody]"
-            is Throwable  -> "Throwable[throwable=$throwable]"
-        }
-    }
 }
 
 

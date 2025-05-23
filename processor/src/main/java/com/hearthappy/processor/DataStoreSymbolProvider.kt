@@ -1,7 +1,6 @@
 package com.hearthappy.processor
 
 import com.google.devtools.ksp.processing.CodeGenerator
-import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
@@ -20,33 +19,39 @@ import com.hearthappy.processor.ext.DataStoreTypeNames
 import com.hearthappy.processor.ext.KotlinTypeNames
 import com.hearthappy.processor.generate.IPoetFactory
 import com.hearthappy.processor.generate.impl.PoetFactory
-import com.hearthappy.processor.log.printDataStore
 import com.hearthappy.processor.model.GenerateDataStoreData
+import com.hearthappy.processor.log.KSPLog
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.KModifier
+import kotlin.system.measureTimeMillis
+
 /**
  * @author ChenRui
  * ClassDescription： DataStore Symbol Processing
  */
 class DataStoreSymbolProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-        return DataStoreSymbolProcessor(environment.logger, environment.codeGenerator, PoetFactory())
+        KSPLog.init(environment.logger)
+        return DataStoreSymbolProcessor(environment.codeGenerator, PoetFactory())
     }
 
-    inner class DataStoreSymbolProcessor(val logger: KSPLogger, val codeGenerator: CodeGenerator, val dataStoreFactory: IPoetFactory) : SymbolProcessor {
+    inner class DataStoreSymbolProcessor(private val codeGenerator: CodeGenerator, private val dataStoreFactory: IPoetFactory) : SymbolProcessor {
         private val generateDataStoreData = GenerateDataStoreData()
 
         override fun process(resolver: Resolver): List<KSAnnotated> {
-            val dsSymbols = resolver.getSymbolsWithAnnotation(DataStore::class.qualifiedName!!).filter { it.validate() }
-            if (dsSymbols.isEmpty()) return emptyList()
-            parsingDSProcess(dsSymbols, resolver)
-            generateDSProcess()
+            val measureTimeMillis = measureTimeMillis {
+                val dsSymbols = resolver.getSymbolsWithAnnotation(DataStore::class.qualifiedName!!).filter { it.validate() }
+                if (dsSymbols.isEmpty()) return emptyList()
+                parsingDSProcess(dsSymbols, resolver)
+                generateDSProcess()
+            }
+            KSPLog.printGenerateDataStoreTook(generateDataStoreData.data.size, measureTimeMillis)
             return emptyList()
         }
 
         private fun generateDSProcess() {
             generateDataStoreData.data.forEach {
-                logger.printDataStore(it.enabledLog, "$it")
+                KSPLog.printDataStore(it.enabledLog, "$it")
                 dataStoreFactory.apply {
                     createFileSpec(it.name.reFileName(), Constant.GENERATE_DATASTORE_PKG).apply {
                         addSpecProperty(it.name.rename(), it.propertyType, AndroidTypeNames.Context, true, CodeBlock.of("%T(name = %S)", DataStoreTypeNames.DataStorePreferences, it.name), KModifier.PUBLIC)
@@ -56,6 +61,7 @@ class DataStoreSymbolProvider : SymbolProcessorProvider {
                         }
                         it.containingFile?.let { cf ->
                             buildAndWrite(classSpec.build(), cf, codeGenerator)
+                            KSPLog.printGenerateDataStore(it.name.rename(),it.name.rePreferencesKeysName())
                         } ?: throw GenerateException("Source file not found")
                     }
                 }
@@ -63,7 +69,7 @@ class DataStoreSymbolProvider : SymbolProcessorProvider {
         }
 
         private fun parsingDSProcess(dsSymbols: Sequence<KSAnnotated>, resolver: Resolver) {
-            dsSymbols.forEachIndexed { index, ksAnnotated -> ksAnnotated.accept(DataStoreVisitor(resolver, logger, generateDataStoreData, index), Unit) }
+            dsSymbols.forEachIndexed { index, ksAnnotated -> ksAnnotated.accept(DataStoreVisitor(resolver, generateDataStoreData, index), Unit) }
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.hearthappy.processor
 
 import com.google.devtools.ksp.processing.CodeGenerator
-import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
@@ -12,47 +11,33 @@ import com.hearthappy.annotations.ViewModelAutomation
 import com.hearthappy.processor.datahandler.DataCheck.isEmpty
 import com.hearthappy.processor.generate.IVMAFactory
 import com.hearthappy.processor.generate.impl.GenerateVMAImpl
-import com.hearthappy.processor.log.printEnd
-import com.hearthappy.processor.log.printGenerateEnd
-import com.hearthappy.processor.log.printGenerateStart
-import com.hearthappy.processor.log.printGenerateVMATook
-import com.hearthappy.processor.log.printParsing
-import com.hearthappy.processor.log.printStart
 import com.hearthappy.processor.model.GenerateViewModelData
+import com.hearthappy.processor.log.KSPLog
 import kotlin.system.measureTimeMillis
+
 /**
  * @author ChenRui
  * ClassDescription： ViewModel Symbol Processing
  */
 class ViewModelSymbolProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-        return ViewModelSymbolProcessor(
-            environment.logger,
-            environment.codeGenerator,
-            GenerateVMAImpl(environment.logger)
-        )
+        KSPLog.init(environment.logger)
+        return ViewModelSymbolProcessor( environment.codeGenerator, GenerateVMAImpl())
     }
 
-    inner class ViewModelSymbolProcessor(
-        private val logger: KSPLogger,
-        private val codeGenerator: CodeGenerator,
-        private val viewModelFactory: IVMAFactory
-    ) :
-        SymbolProcessor {
+    inner class ViewModelSymbolProcessor( private val codeGenerator: CodeGenerator, private val viewModelFactory: IVMAFactory) : SymbolProcessor {
         private val viewModelData by lazy { GenerateViewModelData() }
 
 
         override fun process(resolver: Resolver): List<KSAnnotated> {
-
+            KSPLog.printStart()
             val measureTimeMillis = measureTimeMillis {
-                val vmaSymbols = resolver.getSymbolsWithAnnotation(ViewModelAutomation::class.qualifiedName!!)
-                    .filter { it.validate() }
+                val vmaSymbols = resolver.getSymbolsWithAnnotation(ViewModelAutomation::class.qualifiedName!!).filter { it.validate() }
                 if (vmaSymbols.isEmpty()) return emptyList()
                 parsingVMAProcess(resolver, vmaSymbols, viewModelData)
                 generateVMAProcess()
             }
-            logger.printGenerateVMATook(viewModelData.data.size, measureTimeMillis)
-
+            KSPLog.printGenerateVMATook(viewModelData.data.size, measureTimeMillis)
             return emptyList()
         }
 
@@ -60,13 +45,14 @@ class ViewModelSymbolProvider : SymbolProcessorProvider {
         private fun generateVMAProcess() {
             viewModelData.data.forEach {
                 viewModelFactory.apply {
-                    logger.printGenerateStart(it.enabledLog, it.className)
+//                    logger.printGenerateStart(it.className)
                     generateViewModel(it).apply {
                         generateProperty(it)
                         generateMethod(it)
                         generateAndWriteFile(it, codeGenerator)
+                        KSPLog.printGenerateVMA(it.className, it.functionList.map { it.methodName })
                     }
-                    logger.printGenerateEnd(it.enabledLog, it.className)
+//                    logger.printGenerateEnd(it.className)
                 }
             }
         }
@@ -75,11 +61,9 @@ class ViewModelSymbolProvider : SymbolProcessorProvider {
             resolver: Resolver,
             vmaSymbols: Sequence<KSAnnotated>,
             generateData: GenerateViewModelData,
-        ) {
-            logger.printStart()
-            vmaSymbols.forEachIndexed { index, it -> it.accept(ViewModelVisitor(resolver, logger, generateData, index), Unit) }
-            logger.printParsing(vmaSymbols.count())
-            logger.printEnd()
+        ) { //            logger.printStart()
+            vmaSymbols.forEachIndexed { index, it -> it.accept(ViewModelVisitor(resolver, generateData, index), Unit) } //            logger.printParsing(vmaSymbols.count())
+            //            logger.printEnd()
         }
 
     }

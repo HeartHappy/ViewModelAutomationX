@@ -13,7 +13,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-@ViewModelAutomation("MainViewModel",enableLog = true)
+@ViewModelAutomation("MainViewModel")
 interface ApiService {
 
 

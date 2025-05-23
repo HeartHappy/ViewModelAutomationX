@@ -17,11 +17,10 @@ import com.hearthappy.processor.model.GenerateDataStoreData
  * ClassDescription： 解析DataStore和Write，用于生成DataStoreExt和PreferencesKeys文件
  *
  * @property resolver Resolver
- * @property logger KSPLogger
  * @property generateData GenerateDataStoreData
  * @constructor
  */
-class DataStoreVisitor(private val resolver: Resolver, private val logger: KSPLogger, private val generateData: GenerateDataStoreData, private val index: Int) : KSVisitorVoid() {
+class DataStoreVisitor(private val resolver: Resolver, private val generateData: GenerateDataStoreData, private val index: Int) : KSVisitorVoid() {
 
     override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
         val dataStoreData = DataStoreData()

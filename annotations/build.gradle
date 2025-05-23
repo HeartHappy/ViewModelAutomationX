@@ -5,7 +5,8 @@ plugins {
     id 'signing'
 //    alias(libs.plugins.jetbrains.kotlin.jvm)
 }
-def publishVersion = rootProject.ext.publishVersion
+//def publishVersion = rootProject.ext.publishVersion
+def publishVersion = "1.0.1"
 
 //tasks.register('annotationJavadoc', Javadoc) {
 //    source = sourceSets.main.allJava
