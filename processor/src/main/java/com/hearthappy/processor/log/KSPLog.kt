@@ -3,14 +3,16 @@ package com.hearthappy.processor.log
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSType
 import com.hearthappy.processor.utils.DateUtil
-
+/**
+ * @author ChenRui
+ * ClassDescription： 日志输出格式化
+ */
 class KSPLog {
-
-
     companion object {
-        private const val TAG_VMA = "VMA"
-        private const val TAG_DATASTORE = "DataStore"
+        internal const val TAG_VMA = "VMA"
+        internal const val TAG_DATASTORE = "DataStore"
         private lateinit var logger: KSPLogger
+
         //ע: ARouter::Compiler >>> Start categories, group = web, path = /web/webPage <<<
         fun init(logger: KSPLogger) {
             Companion.logger = logger
@@ -49,12 +51,12 @@ class KSPLog {
         }
 
 
-        fun printStart() {
-            logger.warn("========================================start=================================================")
+        fun printStart(tag: String) {
+            logger.warn("======================================$tag: start =================================================")
         }
 
-        fun printEnd() {
-            logger.warn("======================================== end =================================================\n")
+        fun printEnd(tag: String) {
+            logger.warn("======================================$tag:  end  =================================================\n")
         }
 
         fun printGenerateStart(fileName: String) {

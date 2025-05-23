@@ -30,14 +30,15 @@ class ViewModelSymbolProvider : SymbolProcessorProvider {
 
 
         override fun process(resolver: Resolver): List<KSAnnotated> {
-            KSPLog.printStart()
             val measureTimeMillis = measureTimeMillis {
                 val vmaSymbols = resolver.getSymbolsWithAnnotation(ViewModelAutomation::class.qualifiedName!!).filter { it.validate() }
                 if (vmaSymbols.isEmpty()) return emptyList()
+                KSPLog.printStart(KSPLog.TAG_VMA)
                 parsingVMAProcess(resolver, vmaSymbols, viewModelData)
                 generateVMAProcess()
             }
             KSPLog.printGenerateVMATook(viewModelData.data.size, measureTimeMillis)
+            KSPLog.printEnd(KSPLog.TAG_VMA)
             return emptyList()
         }
 

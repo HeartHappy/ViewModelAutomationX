@@ -42,10 +42,12 @@ class DataStoreSymbolProvider : SymbolProcessorProvider {
             val measureTimeMillis = measureTimeMillis {
                 val dsSymbols = resolver.getSymbolsWithAnnotation(DataStore::class.qualifiedName!!).filter { it.validate() }
                 if (dsSymbols.isEmpty()) return emptyList()
+                KSPLog.printStart(KSPLog.TAG_DATASTORE)
                 parsingDSProcess(dsSymbols, resolver)
                 generateDSProcess()
             }
             KSPLog.printGenerateDataStoreTook(generateDataStoreData.data.size, measureTimeMillis)
+            KSPLog.printEnd(KSPLog.TAG_DATASTORE)
             return emptyList()
         }
 
