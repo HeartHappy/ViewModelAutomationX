@@ -3,6 +3,7 @@ package com.hearthappy.processor.log
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSType
 import com.hearthappy.processor.utils.DateUtil
+
 /**
  * @author ChenRui
  * ClassDescription： 日志输出格式化
@@ -19,11 +20,11 @@ class KSPLog {
         }
 
         fun printGenerateVMATook(count: Int, measureTimeMillis: Long) {
-            logger.warn("$TAG_VMA: ===================> Generate ViewModel file count:$count,took:${DateUtil.formatTime(measureTimeMillis)} <===================")
+            logger.warn("$TAG_VMA: ===================> Generate ViewModel file count:$count,took:${DateUtil.formatTime(measureTimeMillis)} <===================\n")
         }
 
         fun printGenerateDataStoreTook(count: Int, measureTimeMillis: Long) {
-            logger.warn("$TAG_DATASTORE:==============> Generate DataStore file count:$count,took:${DateUtil.formatTime(measureTimeMillis)} <===================")
+            logger.warn("$TAG_DATASTORE:==============> Generate DataStore file count:$count,took:${DateUtil.formatTime(measureTimeMillis)} <===================\n")
         }
 
         fun printGenerateVMA(fileName: String, map: List<String>) {
@@ -52,11 +53,11 @@ class KSPLog {
 
 
         fun printStart(tag: String) {
-            logger.warn("======================================$tag: start =================================================")
+            logger.warn("$tag:=====> start")
         }
 
         fun printEnd(tag: String) {
-            logger.warn("======================================$tag:  end  =================================================\n")
+            logger.warn("$tag:=====> end  \n")
         }
 
         fun printGenerateStart(fileName: String) {

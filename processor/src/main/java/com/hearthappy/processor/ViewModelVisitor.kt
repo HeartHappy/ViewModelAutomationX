@@ -170,9 +170,11 @@ class ViewModelVisitor(
                 storageDataVerification(parentTypeName, property) //Write--->:storageKey:id,storageKeyRename:ID,propertyName:id,dataStorePropertyName:user_info,typename:kotlin.Int,storageValue:result.list.id
                 val storageKey = it.value.toString()
                 val storageKeyRename = storageKey.reConstName()
-                KSPLog.printVma(enabledLog, "Write annotation--->storageKey:${storageKey}, " + "storageValue:${storageValue}, " + //it.result.total.id
+                KSPLog.printVma(enabledLog, "Write annotation--->storageKey:${storageKey}, " +
+                        "storageValue:${storageValue}, " + //it.result.total.id
                         "storageKeyRename:${storageKeyRename}, " + //PreferencesKey
-                        "propertyName:${propertyName}, " + "dataStorePropertyName:${storageList.name}, " + //Context.dataStore扩展属性名
+                        "propertyName:${propertyName}, " +
+                        "dataStorePropertyName:${storageList.name}, " + //Context.dataStore扩展属性名
                         "typename:${typeName}, " //stringPreferencesKey
                 ) //最后一个如果是空则添加后缀?
                 storageList.storageData.add(StorageData(storageKey, if (typeName.toString().endsWith("?")) storageValue.plus("?") else storageValue, typeName.toString()))

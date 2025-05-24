@@ -33,12 +33,10 @@ class ViewModelSymbolProvider : SymbolProcessorProvider {
             val measureTimeMillis = measureTimeMillis {
                 val vmaSymbols = resolver.getSymbolsWithAnnotation(ViewModelAutomation::class.qualifiedName!!).filter { it.validate() }
                 if (vmaSymbols.isEmpty()) return emptyList()
-                KSPLog.printStart(KSPLog.TAG_VMA)
                 parsingVMAProcess(resolver, vmaSymbols, viewModelData)
                 generateVMAProcess()
             }
             KSPLog.printGenerateVMATook(viewModelData.data.size, measureTimeMillis)
-            KSPLog.printEnd(KSPLog.TAG_VMA)
             return emptyList()
         }
 
@@ -46,14 +44,12 @@ class ViewModelSymbolProvider : SymbolProcessorProvider {
         private fun generateVMAProcess() {
             viewModelData.data.forEach {
                 viewModelFactory.apply {
-//                    logger.printGenerateStart(it.className)
                     generateViewModel(it).apply {
                         generateProperty(it)
                         generateMethod(it)
                         generateAndWriteFile(it, codeGenerator)
                         KSPLog.printGenerateVMA(it.className, it.functionList.map { it.methodName })
                     }
-//                    logger.printGenerateEnd(it.className)
                 }
             }
         }
