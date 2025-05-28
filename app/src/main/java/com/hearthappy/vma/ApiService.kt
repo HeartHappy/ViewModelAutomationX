@@ -1,4 +1,4 @@
-package com.hearthappy.vma.api
+package com.hearthappy.vma
 
 import com.hearthappy.annotations.BindLiveData
 import com.hearthappy.annotations.BindStateFlow

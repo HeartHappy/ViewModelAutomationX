@@ -1,5 +1,6 @@
-package com.hearthappy.vma.api
+package com.hearthappy.vma.net
 
+import com.hearthappy.vma.ApiService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

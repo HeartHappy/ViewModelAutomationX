@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.hearthappy.viewmodelautomationx.R
 import com.hearthappy.viewmodelautomationx.databinding.ActivitySharedBinding
-import com.hearthappy.vma.api.RetrofitManage
+import com.hearthappy.vma.net.RetrofitManage
 import com.hearthappy.vma.generate.viewmodel.MainViewModel
 import com.hearthappy.vma_ktx.factory.vma
 import com.hearthappy.vma_ktx.network.Result

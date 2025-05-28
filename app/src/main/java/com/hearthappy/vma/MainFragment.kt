@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.hearthappy.viewmodelautomationx.databinding.FragmentMainBinding
-import com.hearthappy.vma.api.RetrofitManage
+import com.hearthappy.vma.net.RetrofitManage
 import com.hearthappy.vma.generate.viewmodel.MainViewModel
 import com.hearthappy.vma.model.process
 import com.hearthappy.vma.model.toast

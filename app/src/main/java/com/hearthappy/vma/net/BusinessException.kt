@@ -1,4 +1,4 @@
-package com.hearthappy.vma.model
+package com.hearthappy.vma.net
 
 import java.io.IOException
 

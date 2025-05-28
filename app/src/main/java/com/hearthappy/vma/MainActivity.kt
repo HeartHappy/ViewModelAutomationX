@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.hearthappy.viewmodelautomationx.R
 import com.hearthappy.viewmodelautomationx.databinding.ActivityMainBinding
-import com.hearthappy.vma.api.RetrofitManage
+import com.hearthappy.vma.net.RetrofitManage
 import com.hearthappy.vma.generate.datastore.UserDataKeys
 import com.hearthappy.vma.generate.datastore.userDataDataStore
 import com.hearthappy.vma.generate.viewmodel.MainViewModel

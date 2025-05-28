@@ -1,8 +1,7 @@
-package com.hearthappy.vma.api
+package com.hearthappy.vma.net
 
 import android.util.Log
 import com.google.gson.Gson
-import com.hearthappy.vma.model.BusinessException
 import com.hearthappy.vma.model.response.BaseModel
 import okhttp3.Interceptor
 import okhttp3.Request
