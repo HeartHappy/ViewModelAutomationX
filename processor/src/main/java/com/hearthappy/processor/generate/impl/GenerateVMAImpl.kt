@@ -113,7 +113,7 @@ class GenerateVMAImpl : IVMAFactory {
                     vma.imports.add(DataStoreTypeNames.DataStoreEdit) //                    vma.imports.add(DataStoreTypeNames.DataStorePreferencesKeys)
                     addStatement("}, onDataStore = {")
                     addStatement("%L%L.%L.edit { %L->", INDENTATION, Constant.APP, dataStorePropertyName, preferences)
-                    handlerNullProperties(storageData, preferences, vma, name)
+                    handlerNullProperties(genericT, storageData, preferences, vma, name)
                     addStatement("%L}", INDENTATION)
                 }
             }
@@ -128,14 +128,13 @@ class GenerateVMAImpl : IVMAFactory {
      * @param vma ViewModelData
      * @param name String
      */
-    private fun FunSpec.Builder.handlerNullProperties(storageData: MutableList<StorageData>, preferences: String, vma: ViewModelData, name: String) {
-        val filter = storageData.filter { it.actionValue.contains(".") && !it.actionValue.contains("?") }
-        if (filter.isNotEmpty()) filter.first().actionValue.split(".").apply { addStatement("%L%Lit.${this[0]}?:return@edit", INDENTATION, INDENTATION) }
-        storageData.forEach {
-            if (it.actionValue.contains(".")) if (it.actionValue.contains("?")) { //为空的处理
-                addStatement("%L%L%L[%L(%L.%L)] = it.%L?:%L", INDENTATION, INDENTATION, preferences, it.type.string2preferenceType(vma.imports), name.rePreferencesKeysName(), it.key.reConstName(), it.actionValue.replaceLastQuestionMark(), it.type.defaultValue())
+    private fun FunSpec.Builder.handlerNullProperties(genericT: String?, storageData: MutableList<StorageData>, preferences: String, vma: ViewModelData, name: String) { //        val filter = storageData.filter { it.actionValue.contains(".") && !it.actionValue.contains("?") }
+        genericT?.let { addStatement("%L%Lit.$it?:return@edit", INDENTATION, INDENTATION) }
+        for (sd in storageData) {
+            if (sd.actionValue.contains(".") && sd.actionValue.contains("?")) { //为空的处理
+                addStatement("%L%L%L[%L(%L.%L)] = it.%L?:%L", INDENTATION, INDENTATION, preferences, sd.type.string2preferenceType(vma.imports), name.rePreferencesKeysName(), sd.key.reConstName(), sd.actionValue.replaceLastQuestionMark(), sd.type.defaultValue())
             } else {
-                addStatement("%L%L%L[%L(%L.%L)] = it.%L", INDENTATION, INDENTATION, preferences, it.type.string2preferenceType(vma.imports), name.rePreferencesKeysName(), it.key.reConstName(), it.actionValue)
+                addStatement("%L%L%L[%L(%L.%L)] = it.%L", INDENTATION, INDENTATION, preferences, sd.type.string2preferenceType(vma.imports), name.rePreferencesKeysName(), sd.key.reConstName(), sd.actionValue)
             }
         }
     }

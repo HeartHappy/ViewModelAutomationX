@@ -12,6 +12,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:name="com.hearthappy.vma.MyApp"
         android:theme="@style/Theme.ViewModelAutomation"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">

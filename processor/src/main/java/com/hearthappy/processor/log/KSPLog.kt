@@ -10,8 +10,8 @@ import com.hearthappy.processor.utils.DateUtil
  */
 class KSPLog {
     companion object {
-        internal const val TAG_VMA = "VMA"
-        internal const val TAG_DATASTORE = "DataStore"
+        private const val TAG_VMA = "VMA"
+        private const val TAG_DATASTORE = "DataStore"
         private lateinit var logger: KSPLogger
 
         //ע: ARouter::Compiler >>> Start categories, group = web, path = /web/webPage <<<
@@ -28,7 +28,7 @@ class KSPLog {
         }
 
         fun printGenerateVMA(fileName: String, map: List<String>) {
-            logger.warn("$TAG_VMA: =====> Generate ViewModel file:$fileName,>>> methods:$map")
+            logger.warn("$TAG_VMA: =====> Generate ViewModel file:$fileName >>> methods:$map")
         }
 
         fun printParsing(count: Int) {
@@ -48,7 +48,7 @@ class KSPLog {
         }
 
         fun printGenerateDataStore(properties: String, preferencesKeysName: String) {
-            logger.warn("$TAG_DATASTORE:=====> Generate Properties: $properties,>>> PreferencesKeys class:  $preferencesKeysName")
+            logger.warn("$TAG_DATASTORE:=====> Generate Properties: $properties >>> PreferencesKeys class: $preferencesKeysName")
         }
 
 

@@ -14,18 +14,19 @@ import com.hearthappy.vma.api.RetrofitManage
 import com.hearthappy.vma.generate.datastore.UserDataKeys
 import com.hearthappy.vma.generate.datastore.userDataDataStore
 import com.hearthappy.vma.generate.viewmodel.MainViewModel
+import com.hearthappy.vma.model.process
 import com.hearthappy.vma.model.readMultiple
+import com.hearthappy.vma.model.toast
 import com.hearthappy.vma_ktx.factory.vma
 import com.hearthappy.vma_ktx.network.FlowResult
 import com.hearthappy.vma_ktx.network.Result
-import com.hearthappy.vma_ktx.network.asThrowableMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: MainViewModel by vma{RetrofitManage.apiService}
+    private val viewModel: MainViewModel by vma { RetrofitManage.apiService }
 
 
     private lateinit var viewBinding: ActivityMainBinding
@@ -65,16 +66,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViewModelListener() {
-        lifecycleScope.launch {
-            viewModel.sfLogin.flowWithLifecycle(lifecycle, Lifecycle.State.CREATED).collect {
-                when (it) {
-                    is FlowResult.Default -> {}
-                    is FlowResult.Loading -> showMessage(getString(R.string.loading))
-                    is FlowResult.Succeed<*> -> showMessage(it.body.toString())
-                    is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
-                }
-            }
-        }
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -82,8 +73,8 @@ class MainActivity : AppCompatActivity() {
                     when (it) {
                         is FlowResult.Default -> {}
                         is FlowResult.Loading -> showMessage(getString(R.string.loading))
-                        is FlowResult.Succeed<*> -> showMessage(it.body.toString())
-                        is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
+                        is FlowResult.Succeed -> it.process { showMessage(toString()) }
+                        is FlowResult.Throwable -> it.toast()
                     }
                 }
             }
@@ -91,23 +82,21 @@ class MainActivity : AppCompatActivity() {
         viewModel.ldGetSentences.observe(this@MainActivity) {
             it?.let {
                 when (it) {
-                    is Result.Succeed -> showMessage(it.body.toString())
-                    is Result.Throwable -> showMessage(it.asThrowableMessage())
+                    is Result.Succeed -> it.process { showMessage(this.toString()) }
+                    is Result.Throwable -> it.toast()
                 }
             }
         }
-//        lifecycleScope.launch {
-//            viewModel.sfLogin.collect{
-//                when (it) {
-//                    is FlowResult.Default -> Unit
-//                    is FlowResult.Loading -> Unit
-//                    is FlowResult.Succeed -> {
-//                        Toast.makeText(this@MainActivity, "${it.body.result}", Toast.LENGTH_SHORT).show()
-//                    }
-//                    is FlowResult.Throwable ->it.toast()
-//                }
-//            }
-//        }
+        lifecycleScope.launch {
+            viewModel.sfLogin.flowWithLifecycle(lifecycle, Lifecycle.State.CREATED).collect {
+                when (it) {
+                    is FlowResult.Default -> Unit
+                    is FlowResult.Loading -> showMessage(getString(R.string.loading))
+                    is FlowResult.Succeed -> it.process { showMessage(toString()) }
+                    is FlowResult.Throwable -> it.toast()
+                }
+            }
+        }
     }
 
     private fun showMessage(message: String?) {

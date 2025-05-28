@@ -155,6 +155,7 @@ class ViewModelVisitor(
                 val storageList = StorageList()
                 val findArgsValue = it.annotations.findSpecifiedAnt(Constant.DATASTORE)?.arguments?.findArgsValue<String>(DataStoreArgs.NAME)
                 storageList.name = findArgsValue //递归查找DataWrite注解
+                storageList.genericT=parent
                 findDataWrite(it, functionData, storageList, parent, null, viewModelData.enabledLog)
             }
         }
@@ -166,7 +167,7 @@ class ViewModelVisitor(
             val typeName = property.type.toTypeName() //如果该属性包含注解，解析并存储
             val argument = property.annotations.findSpecifiedAnt(Constant.DATA_WRITE)?.arguments?.first() //存储调用值
             val storageValue = getStorageValue(parentTypeName, parent, propertyName)
-            argument?.let { //                logger.printVma(true, "parentTypeName:${parentTypeName},typeName:${typeName},parent:${parent},propertyName:${propertyName}")
+            argument?.let {
                 storageDataVerification(parentTypeName, property) //Write--->:storageKey:id,storageKeyRename:ID,propertyName:id,dataStorePropertyName:user_info,typename:kotlin.Int,storageValue:result.list.id
                 val storageKey = it.value.toString()
                 val storageKeyRename = storageKey.reConstName()
@@ -179,7 +180,12 @@ class ViewModelVisitor(
                 ) //最后一个如果是空则添加后缀?
                 storageList.storageData.add(StorageData(storageKey, if (typeName.toString().endsWith("?")) storageValue.plus("?") else storageValue, typeName.toString()))
             }
-            recursiveSearch(property, functionData, storageList, storageValue, enabledLog)
+            val objectRelationArgument = property.annotations.findSpecifiedAnt(Constant.OBJECT_RELATION)
+            val type = property.type.resolve()
+            if (type.declaration is KSClassDeclaration && objectRelationArgument != null){
+                findDataWrite((type.declaration as KSClassDeclaration), functionData, storageList, storageValue, type.toTypeName(), enabledLog)
+            }
+//            recursiveSearch(property, functionData, storageList, storageValue, enabledLog)
         }
         functionData.storageList = storageList
     }

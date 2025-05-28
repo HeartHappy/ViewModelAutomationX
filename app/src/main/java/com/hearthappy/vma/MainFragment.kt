@@ -10,10 +10,11 @@ import androidx.lifecycle.lifecycleScope
 import com.hearthappy.viewmodelautomationx.databinding.FragmentMainBinding
 import com.hearthappy.vma.api.RetrofitManage
 import com.hearthappy.vma.generate.viewmodel.MainViewModel
+import com.hearthappy.vma.model.process
+import com.hearthappy.vma.model.toast
 import com.hearthappy.vma_ktx.factory.vma
 import com.hearthappy.vma_ktx.factory.vmaFromActivity
 import com.hearthappy.vma_ktx.network.FlowResult
-import com.hearthappy.vma_ktx.network.asThrowableMessage
 import kotlinx.coroutines.launch
 
 
@@ -55,32 +56,31 @@ class MainFragment : Fragment() {
                 .collect {
                     when (it) {
                         is FlowResult.Default -> {}
-//                        is FlowResult.Failed -> showMessage(it.asFailedMessage())
 
-                        is FlowResult.Loading -> showMessage("加载")
+                        is FlowResult.Loading -> showMessage("加载...")
 
-                        is FlowResult.Succeed<*> -> showMessage(it.body.toString())
+                        is FlowResult.Succeed -> it.process { showMessage(toString()) }
 
-                        is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
+                        is FlowResult.Throwable -> it.toast()
                     }
                 }
         }
 
-//        lifecycleScope.launch {
+        //        lifecycleScope.launch {
         //            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-//            viewModel.sfImages.collect {
-//                when (it) {
-//                    is FlowResult.Default -> {}
-//
-//                    is FlowResult.Loading -> showMessage("加载")
-//
-//                    is FlowResult.Succeed<*> -> showMessage(it.body.toString())
-//
-//                    is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
-//                }
-//            }
+        //            viewModel.sfImages.collect {
+        //                when (it) {
+        //                    is FlowResult.Default -> {}
+        //
+        //                    is FlowResult.Loading -> showMessage("加载")
+        //
+        //                    is FlowResult.Succeed<*> -> showMessage(it.body.toString())
+        //
+        //                    is FlowResult.Throwable -> showMessage(it.asThrowableMessage())
+        //                }
         //            }
-//        }
+        //            }
+        //        }
     }
 
     private fun showMessage(message: String?) {

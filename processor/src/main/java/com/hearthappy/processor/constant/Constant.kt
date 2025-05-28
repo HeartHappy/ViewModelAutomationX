@@ -8,6 +8,7 @@ object Constant {
     const val BIND_LIVE_DATA = "BindLiveData"
     const val DATA_WRITE = "DataWrite"
     const val DATASTORE = "DataStore"
+    const val OBJECT_RELATION = "ObjectRelation"
     const val FILE_STORAGE = "FileStorage"
 
     //生成路径

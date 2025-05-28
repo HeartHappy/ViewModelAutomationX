@@ -2,10 +2,8 @@ package com.hearthappy.vma_ktx.network
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainCoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -26,25 +24,18 @@ import kotlinx.coroutines.withContext
 //    }
 //}
 
-fun <R> ViewModel.requestScope(io: suspend () -> R, onSucceed: (R) -> Unit, onThrowable: (Throwable) -> Unit, onDataStore: suspend CoroutineScope.(R) -> Unit = {}, dispatcher: CoroutineDispatcher = Dispatchers.Main) {
+fun <R> ViewModel.requestScope(io: suspend () -> R, onSucceed: (R) -> Unit, onThrowable: (Throwable) -> Unit, onDataStore: suspend CoroutineScope.(R) -> Unit = {}) {
     viewModelScope.launch(Dispatchers.IO) {
         try {
             val result = io()
             onDataStore(result)
-            withMainCoroutine(dispatcher) { onSucceed(result) }
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            withMainCoroutine(dispatcher) { onThrowable(e) }
+            withContext(Dispatchers.Main) { onSucceed(result) }
+        } catch (e: Throwable) { //            e.printStackTrace()
+            withContext(Dispatchers.Main) { onThrowable(e) }
         }
     }
 }
 
-suspend fun withMainCoroutine(dispatcher: CoroutineDispatcher, block: () -> Unit) {
-    when (dispatcher) {
-        is MainCoroutineDispatcher -> withContext(Dispatchers.Main) { block() }
-        else -> block()
-    }
-}
 
 
 

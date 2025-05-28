@@ -64,7 +64,7 @@ dependencies {
     implementation libs.squareup.converter.gson
     implementation libs.squareup.adapter.rxjava2
     implementation libs.squareup.okhttp3
-
+    implementation 'com.github.getActivity:ToastUtils:10.3'
 
     implementation libs.datastore.preferences
     implementation libs.datastore.preferences.core

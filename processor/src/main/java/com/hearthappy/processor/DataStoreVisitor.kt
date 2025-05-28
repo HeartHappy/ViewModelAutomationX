@@ -1,6 +1,5 @@
 package com.hearthappy.processor
 
-import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
@@ -53,11 +52,16 @@ class DataStoreVisitor(private val resolver: Resolver, private val generateData:
                 this.storageMap[storageKey] = storageValue
             }
         }
-
-        recursiveSearch(property, data)
+        val objectRelationArgument = property.annotations.findSpecifiedAnt(Constant.OBJECT_RELATION)
+        val type = property.type.resolve()
+        if (type.declaration is KSClassDeclaration && objectRelationArgument != null) (type.declaration as KSClassDeclaration).accept(this, data) //        recursiveSearch(property, data)
         super.visitPropertyDeclaration(property, data)
     }
 
+
+    /**
+     * 递归搜索DataWrite注解
+     */
     private fun recursiveSearch(property: KSPropertyDeclaration, data: Unit) { // 检查属性类型
         val type = property.type.resolve() //如果属性是一个类，则继续递归访问该类的属性
         if (type.declaration is KSClassDeclaration) { // 检查是否为集合类型（如 List、Set 等）
@@ -71,6 +75,7 @@ class DataStoreVisitor(private val resolver: Resolver, private val generateData:
                     }
                 }
             } else {
+
                 (type.declaration as KSClassDeclaration).accept(this, data)
             }
         }
