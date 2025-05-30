@@ -25,10 +25,12 @@ adapterVesion = "2.3.0"
 okhttp3Version = "4.9.2"
 
 dataStoreVersion = "1.0.0"
-vmaVersion="1.0.8"
+toastutilsVersion = "10.3"
+vmaVersion="1.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+getactivity-toastutils = { module = "com.github.getActivity:ToastUtils", version.ref = "toastutilsVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -55,9 +57,12 @@ squareup-okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.re
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "dataStoreVersion" }
 datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "dataStoreVersion" }
 
-github-vma-annotations = { module = "com.github.HeartHappy.ViewModelAutomationX:annotations", version.ref = "vmaVersion" }
-github-vma-processor = { module = "com.github.HeartHappy.ViewModelAutomationX:processor", version.ref = "vmaVersion" }
-github-vma-ktx = { module = "com.github.HeartHappy.ViewModelAutomationX:vma-ktx", version.ref = "vmaVersion" }
+#github-vma-annotations = { module = "com.github.HeartHappy.ViewModelAutomationX:annotations", version.ref = "vmaVersion" }
+#github-vma-processor = { module = "com.github.HeartHappy.ViewModelAutomationX:processor", version.ref = "vmaVersion" }
+#github-vma-ktx = { module = "com.github.HeartHappy.ViewModelAutomationX:vma-ktx", version.ref = "vmaVersion" }
+hearthappy-vma-annotations = { module = "io.github.hearthappy:vma-annotations", version.ref = "vmaVersion" }
+hearthappy-vma-processor = { module = "io.github.hearthappy:vma-processor", version.ref = "vmaVersion" }
+hearthappy-vma-ktx = { module  = "io.github.hearthappy:vma-ktx", version.ref = "vmaVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -1,3 +1,5 @@
+import com.hearthappy.LayoutWatchPlugin
+
 plugins {
 //    alias(libs.plugins.android.application)
 //    alias(libs.plugins.kotlin.android)
@@ -6,7 +8,11 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp'
 }
-
+apply plugin: LayoutWatchPlugin
+// 可选：绑定到 assemble 任务（构建时自动启动监听）
+tasks.named('assemble') {
+    dependsOn 'watchLayout'
+}
 android {
     namespace 'com.hearthappy.viewmodelautomationx'
     compileSdk  rootProject.ext.compileSdk
@@ -64,18 +70,18 @@ dependencies {
     implementation libs.squareup.converter.gson
     implementation libs.squareup.adapter.rxjava2
     implementation libs.squareup.okhttp3
-    implementation 'com.github.getActivity:ToastUtils:10.3'
+    implementation libs.getactivity.toastutils
 
     implementation libs.datastore.preferences
     implementation libs.datastore.preferences.core
 //    implementation libs.kotlin.reflect
     //远程库
-//    implementation libs.github.vma.annotations
-//    implementation libs.github.vma.ktx
-//    ksp libs.github.vma.processor
+    implementation libs.hearthappy.vma.annotations
+    implementation libs.hearthappy.vma.ktx
+    ksp libs.hearthappy.vma.processor
 
-    implementation project(':vma-ktx')
-    implementation project(':annotations')
-    //注意：要求jdk11或更高才能将生成文件作为资源引用
-    ksp project(":processor")
+//    implementation project(':vma-ktx')
+//    implementation project(':annotations')
+//    //注意：要求jdk11或更高才能将生成文件作为资源引用
+//    ksp project(":processor")
 }

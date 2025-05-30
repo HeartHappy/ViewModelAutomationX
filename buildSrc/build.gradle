@@ -1,0 +1,14 @@
+// buildSrc/build.gradle
+plugins {
+    id 'groovy'  // 用于编译 Groovy 代码
+}
+
+repositories {
+    mavenCentral()
+    google()  // 可选（若需要 Android 相关依赖）
+}
+
+dependencies {
+    implementation gradleApi()  // 引入 Gradle API（关键！解决 TaskAction 等注解找不到的问题）
+    implementation localGroovy()  // 引入 Groovy 运行时库
+}

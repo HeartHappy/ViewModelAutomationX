@@ -8,16 +8,7 @@ plugins {
 //    alias(libs.plugins.devtools.ksp)
 }
 def publishVersion = rootProject.ext.publishVersion
-//tasks.register('processor-javadoc', Javadoc) {
-//    source = sourceSets.main.java.sourceFiles
-//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-//}
-//
-//tasks.register('javadocJar', Jar) {
-//    dependsOn javadoc
-//    archiveClassifier.set("javadoc")
-//    from javadoc.destinationDir
-//}
+
 // 生成 Javadoc JAR
 tasks.register('javadocJar', Jar) {
     dependsOn javadoc
