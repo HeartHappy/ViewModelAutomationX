@@ -21,4 +21,4 @@
 #-renamesourcefileattribute SourceFile
 # 保留反射相关类
 -keep class kotlin.reflect.** { *; }
--keep class kotlin.Metadata { *; }
+#-keep class kotlin.Metadata { *; }

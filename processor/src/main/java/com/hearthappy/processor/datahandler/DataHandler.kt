@@ -76,12 +76,22 @@ fun String.reFileName(): String {
         .replaceFirstChar { it.uppercase() }.plus("Ext")
 }
 
+/**
+ * 转换成PreferencesKeys格式。例如：UserInfoKeys
+ * @receiver String
+ * @return String
+ */
 fun String.rePreferencesKeysName(): String {
     return this.split("_")
         .joinToString("") { it.replaceFirstChar { rfc -> rfc.uppercaseChar() } }
         .replaceFirstChar { it.uppercase() }.plus("Keys")
 }
 
+/**
+ * 转换成驼峰命名规则。例如：userInfo
+ * @param input String
+ * @return String
+ */
 fun convertToCamelCase(input: String): String {
     return input.split("_")
         .joinToString("") { joinStr -> joinStr.replaceFirstChar { it.uppercaseChar() } }

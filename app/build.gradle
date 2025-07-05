@@ -1,4 +1,4 @@
-import com.hearthappy.LayoutWatchPlugin
+//import com.hearthappy.LayoutWatchPlugin
 
 plugins {
 //    alias(libs.plugins.android.application)
@@ -8,7 +8,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp'
 }
-apply plugin: LayoutWatchPlugin
+//apply plugin: LayoutWatchPlugin
 // 可选：绑定到 assemble 任务（构建时自动启动监听）
 tasks.named('assemble') {
     dependsOn 'watchLayout'
@@ -76,12 +76,12 @@ dependencies {
     implementation libs.datastore.preferences.core
 //    implementation libs.kotlin.reflect
     //远程库
-    implementation libs.hearthappy.vma.annotations
-    implementation libs.hearthappy.vma.ktx
-    ksp libs.hearthappy.vma.processor
+//    implementation libs.hearthappy.vma.annotations
+//    implementation libs.hearthappy.vma.ktx
+//    ksp libs.hearthappy.vma.processor
 
-//    implementation project(':vma-ktx')
+    implementation project(':vma-ktx')
 //    implementation project(':annotations')
 //    //注意：要求jdk11或更高才能将生成文件作为资源引用
-//    ksp project(":processor")
+    ksp project(":processor")
 }

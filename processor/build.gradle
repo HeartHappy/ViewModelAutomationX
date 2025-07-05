@@ -1,8 +1,8 @@
 plugins {
     id "java-library"
-    id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm'
     id 'com.google.devtools.ksp'
+    id 'maven-publish'
     id 'signing'
 //    alias(libs.plugins.jetbrains.kotlin.jvm)
 //    alias(libs.plugins.devtools.ksp)
@@ -103,7 +103,7 @@ dependencies {
     implementation libs.devtools.ksp
     implementation libs.kotlinpoet.ksp
 //    implementation 'com.squareup:kotlinpoet-ksp:1.12.0'
-    implementation project(':annotations')
+    api libs.hearthappy.vma.annotations
 }
 
 compileKotlin {
