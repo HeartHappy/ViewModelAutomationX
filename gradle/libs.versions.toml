@@ -26,7 +26,8 @@ okhttp3Version = "4.9.2"
 
 dataStoreVersion = "1.0.0"
 toastutilsVersion = "10.3"
-vmaVersion="1.0.3"
+vmaAnnotationVersion ="1.0.3"
+vmaKtxVersion ="1.0.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,9 +61,9 @@ datastore-preferences-core = { group = "androidx.datastore", name = "datastore-p
 #github-vma-annotations = { module = "com.github.HeartHappy.ViewModelAutomationX:annotations", version.ref = "vmaVersion" }
 #github-vma-processor = { module = "com.github.HeartHappy.ViewModelAutomationX:processor", version.ref = "vmaVersion" }
 #github-vma-ktx = { module = "com.github.HeartHappy.ViewModelAutomationX:vma-ktx", version.ref = "vmaVersion" }
-hearthappy-vma-annotations = { module = "io.github.hearthappy:vma-annotations", version.ref = "vmaVersion" }
-hearthappy-vma-processor = { module = "io.github.hearthappy:vma-processor", version.ref = "vmaVersion" }
-hearthappy-vma-ktx = { module  = "io.github.hearthappy:vma-ktx", version.ref = "vmaVersion" }
+hearthappy-vma-annotations = { module = "io.github.hearthappy:vma-annotations", version.ref = "vmaAnnotationVersion" }
+hearthappy-vma-processor = { module = "io.github.hearthappy:vma-processor", version.ref = "vmaAnnotationVersion" }
+hearthappy-vma-ktx = { module  = "io.github.hearthappy:vma-ktx", version.ref = "vmaKtxVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

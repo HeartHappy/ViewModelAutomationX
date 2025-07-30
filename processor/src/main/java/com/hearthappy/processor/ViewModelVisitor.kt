@@ -27,7 +27,6 @@ import com.hearthappy.processor.ext.ViewModelAutomationArgs
 import com.hearthappy.processor.ext.getGenericProperty
 import com.hearthappy.processor.log.KSPLog
 import com.hearthappy.processor.model.FunctionData
-import com.hearthappy.processor.model.GenerateViewModelData
 import com.hearthappy.processor.model.StorageData
 import com.hearthappy.processor.model.StorageList
 import com.hearthappy.processor.model.ViewModelData
@@ -35,34 +34,32 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.toTypeName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 
 /**
  * @author ChenRui
  * ClassDescription： 解析ViewModel相关数据
  */
-class ViewModelVisitor(
-    private val resolver: Resolver,
-    private val generateData: GenerateViewModelData,
-    private val index: Int,
-) : KSVisitorVoid() {
+
+class ViewModelVisitor(private val channel: Channel<ViewModelData>, private val coroutineScope: CoroutineScope, private val resolver: Resolver) : KSVisitorVoid() {
+    private val viewModelData = ViewModelData()
+
     override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
-        generateData.data.add(ViewModelData())
-        val viewModelData = generateData.data.get(index = index)
         viewModelData.containingFile = classDeclaration.containingFile
         classDeclaration.apply {
             val apiClassName = simpleName.asString()
             if (this.isAbstract()) {
                 parsingClassAndAnnotation(viewModelData, apiClassName)
                 classDeclaration.getAllFunctions().forEach { it.accept(this@ViewModelVisitor, data) }
+                coroutineScope.launch { channel.send(viewModelData) }
             } else throw VMAAnalysisException("VMA: Please declare the ViewModelAutomation annotation on the interface,currently declare it on the <${apiClassName}> class")
         }
-
-
     }
 
 
     override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
-        val viewModelData = generateData.data.get(index = index)
         val functionName = function.simpleName.asString()
         if (DataCheck.isFunction(functionName)) {
             KSPLog.printVma(viewModelData.enabledLog, "function name: $functionName")
@@ -71,7 +68,7 @@ class ViewModelVisitor(
                 parsingFunAnnotation(function, this, functionName, viewModelData)
                 parsingFunParams(function, this, viewModelData)
                 parsingFunReturnType(function, this, viewModelData)
-                viewModelData.functionList.add(this)
+                viewModelData.functionList.add(this@apply)
             }
         }
         super.visitFunctionDeclaration(function, data)
@@ -155,7 +152,7 @@ class ViewModelVisitor(
                 val storageList = StorageList()
                 val findArgsValue = it.annotations.findSpecifiedAnt(Constant.DATASTORE)?.arguments?.findArgsValue<String>(DataStoreArgs.NAME)
                 storageList.name = findArgsValue //递归查找DataWrite注解
-                storageList.genericT=parent
+                storageList.genericT = parent
                 findDataWrite(it, functionData, storageList, parent, null, viewModelData.enabledLog)
             }
         }
@@ -171,21 +168,18 @@ class ViewModelVisitor(
                 storageDataVerification(parentTypeName, property) //Write--->:storageKey:id,storageKeyRename:ID,propertyName:id,dataStorePropertyName:user_info,typename:kotlin.Int,storageValue:result.list.id
                 val storageKey = it.value.toString()
                 val storageKeyRename = storageKey.reConstName()
-                KSPLog.printVma(enabledLog, "Write annotation--->storageKey:${storageKey}, " +
-                        "storageValue:${storageValue}, " + //it.result.total.id
+                KSPLog.printVma(enabledLog, "Write annotation--->storageKey:${storageKey}, " + "storageValue:${storageValue}, " + //it.result.total.id
                         "storageKeyRename:${storageKeyRename}, " + //PreferencesKey
-                        "propertyName:${propertyName}, " +
-                        "dataStorePropertyName:${storageList.name}, " + //Context.dataStore扩展属性名
+                        "propertyName:${propertyName}, " + "dataStorePropertyName:${storageList.name}, " + //Context.dataStore扩展属性名
                         "typename:${typeName}, " //stringPreferencesKey
                 ) //最后一个如果是空则添加后缀?
                 storageList.storageData.add(StorageData(storageKey, if (typeName.toString().endsWith("?")) storageValue.plus("?") else storageValue, typeName.toString()))
             }
             val objectRelationArgument = property.annotations.findSpecifiedAnt(Constant.OBJECT_RELATION)
             val type = property.type.resolve()
-            if (type.declaration is KSClassDeclaration && objectRelationArgument != null){
+            if (type.declaration is KSClassDeclaration && objectRelationArgument != null) {
                 findDataWrite((type.declaration as KSClassDeclaration), functionData, storageList, storageValue, type.toTypeName(), enabledLog)
-            }
-//            recursiveSearch(property, functionData, storageList, storageValue, enabledLog)
+            } //            recursiveSearch(property, functionData, storageList, storageValue, enabledLog)
         }
         functionData.storageList = storageList
     }
