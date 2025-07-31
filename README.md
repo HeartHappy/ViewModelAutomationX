@@ -30,8 +30,7 @@
    ```groovy
    allprojects {
        repositories {
-           //远程仓库：https://jitpack.io
-           maven { url 'https://jitpack.io' }
+           mavenCentral()
        }
    }
    ```
@@ -41,8 +40,7 @@
    ```groovy
    dependencyResolutionManagement {
        repositories {
-           //远程仓库：https://jitpack.io
-           maven { url 'https://jitpack.io' }
+          mavenCentral()
        }
    }
    ```
@@ -75,12 +73,10 @@ android{
 }
 
 dependencies {
-	//注解库
-    implementation 'com.github.HeartHappy.ViewModelAutomationX:annotations:1.0.8'
     //扩展库
-    implementation 'com.github.HeartHappy.ViewModelAutomationX:vma-ktx:1.0.8'
+    implementation 'io.github.hearthappy:vma-ktx:1.0.4'
     //处理注解自动生成库
-    ksp 'com.github.HeartHappy.ViewModelAutomationX:processor:1.0.8'
+    ksp 'io.github.hearthappy:vma-processor:1.0.4'
 }
 ```
 
