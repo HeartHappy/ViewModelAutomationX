@@ -1,10 +1,8 @@
-package com.hearthappy.vma.model.testmodel;
+package com.hearthappy.vma.model.testmodel
 
-import java.util.List;
-
-public class FindDynamicDto {
-    public String count;
-    public Integer next;
-    public Integer is_attention;
-    public List<DynamicDTO> record;
+class FindDynamicDto {
+    var count: String? = null
+    var next: Int? = null
+    var is_attention: Int? = null
+    var record: List<DynamicDTO>? = null
 }

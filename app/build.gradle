@@ -79,9 +79,10 @@ dependencies {
 //    implementation libs.kotlin.reflect
     //远程库
     implementation libs.hearthappy.vma.ktx
-//    ksp libs.hearthappy.vma.processor
+    ksp libs.hearthappy.vma.processor
 
 //    implementation project(':vma-ktx')
 //    //注意：要求jdk11或更高才能将生成文件作为资源引用
-    ksp project(":processor")
+//    ksp project(":processor")
+
 }
